@@ -1,0 +1,50 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  background-color: #7f5213;
+  padding: 1rem;
+}
+
+nav a,
+nav button {
+  color: white;
+  margin-right: 1rem;
+  text-decoration: none;
+}
+
+nav button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.App {
+  padding: 20px;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+form input,
+form select,
+form button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+}
