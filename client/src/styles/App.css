@@ -1,50 +1,120 @@
+/* college-portal/client/src/styles/App.css */
+
+/* Import Tailwind's base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-nav {
-  background-color: #7f5213;
-  padding: 1rem;
+/* Light mode defaults (optional, can be overridden by Tailwind classes) */
+body {
+  background-color: #f3f4f6; /* Equivalent to Tailwind's bg-gray-100 */
+  color: #1f2937; /* Equivalent to Tailwind's text-gray-900 */
 }
 
-nav a,
-nav button {
-  color: white;
-  margin-right: 1rem;
-  text-decoration: none;
+/* Dark mode styles */
+.dark {
+  background-color: #000000; /* Black background for the entire app in dark mode */
+  color: #ffffff; /* White text for the entire app in dark mode */
 }
 
-nav button {
-  background: none;
-  border: none;
+/* Ensure all elements have white text in dark mode */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark p,
+.dark label,
+.dark input,
+.dark textarea,
+.dark select,
+.dark span,
+.dark div,
+.dark a,
+.dark li,
+.dark button {
+  color: #ffffff !important; /* Force white text in dark mode */
+}
+
+/* Override Tailwind background colors in dark mode */
+.dark .bg-white,
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.dark .bg-gray-300,
+.dark .bg-gray-400,
+.dark .bg-gray-500,
+.dark .bg-gray-600,
+.dark .bg-gray-700,
+.dark .bg-gray-800,
+.dark .bg-gray-900 {
+  background-color: #000000 !important; /* Force black background in dark mode */
+}
+
+/* Ensure buttons and links remain visible in dark mode */
+.dark .bg-blue-500 {
+  background-color: #3b82f6 !important; /* Keep Tailwind's blue-500 */
+}
+.dark .bg-blue-600 {
+  background-color: #2563eb !important; /* Keep Tailwind's blue-600 */
+}
+.dark .text-blue-500 {
+  color: #3b82f6 !important; /* Keep Tailwind's blue-500 for text */
+}
+.dark .text-blue-400 {
+  color: #60a5fa !important; /* Keep Tailwind's blue-400 for text */
+}
+
+/* Dark Mode Toggler (Custom styles for animation) */
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.dark-mode-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background-color: #d1d5db; /* Light gray in light mode */
+  border-radius: 9999px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.App {
-  padding: 20px;
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff; /* White circle in light mode */
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-form {
-  margin-bottom: 20px;
+.dark-mode-toggle input:checked + .toggle-slider {
+  background-color: #3b82f6; /* Blue in dark mode (Tailwind's blue-500) */
 }
 
-form input,
-form select,
-form button {
-  margin-right: 10px;
-  margin-bottom: 10px;
+.dark-mode-toggle input:checked + .toggle-slider::before {
+  transform: translateX(24px);
+  background-color: #ffffff; /* Keep the circle white in dark mode */
 }
 
-button {
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #ccc;
-}
+/* Add any additional custom styles here */

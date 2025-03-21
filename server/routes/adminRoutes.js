@@ -13,6 +13,7 @@ const {
   getAllTeachers,
   getAllSubjects,
   getAllDepartments,
+  getAllUsers,
 } = require("../controllers/adminController");
 
 router.use(auth);
@@ -28,5 +29,7 @@ router.get("/students", getAllStudents);
 router.get("/teachers", getAllTeachers);
 router.get("/subjects", getAllSubjects);
 router.get("/departments", getAllDepartments);
+router.get("/users", getAllStudents);
+router.get("/users", getAllUsers);
 
 module.exports = router;

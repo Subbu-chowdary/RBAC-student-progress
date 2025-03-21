@@ -13,7 +13,6 @@ import AdminPage from "./pages/AdminPage";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
 import "./styles/App.css";
-
 const PrivateRoute = ({ children, allowedRole }) => {
   const { user } = useSelector((state) => state.auth);
   return user && user.role === allowedRole ? (

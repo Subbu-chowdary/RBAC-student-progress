@@ -1,3 +1,4 @@
+// college-portal/server/controllers/adminController.js
 const mongoose = require("mongoose");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
@@ -23,39 +24,51 @@ const addStudent = async (req, res) => {
     if (!departmentExists) {
       return res.status(400).json({ message: "Department not found" });
     }
-    let user = await User.findOne({ email });
-    if (user && user.role !== "student") {
+
+    // Check if email already exists (case-insensitive)
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (user) {
       return res.status(400).json({
-        message: "Email is already associated with a different role",
+        message: "A user with this email already exists",
       });
     }
-    if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      user = new User({
-        email,
-        password: hashedPassword,
-        role: "student",
-        name,
-      });
-      await user.save();
-    }
+
+    // Create new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      email: email.toLowerCase(), // Store email in lowercase
+      password: hashedPassword,
+      role: "student",
+      name,
+    });
+    await newUser.save();
+
+    // Create new student
     const finalStudentId = studentId || (await generateStudentId());
     const student = new Student({
-      userId: user._id,
+      userId: newUser._id,
       studentId: finalStudentId,
       name,
       department,
     });
     await student.save();
+
     const populatedStudent = await Student.findById(student._id)
       .populate("department", "name")
-      .populate("enrolledSubjects", "name");
+      .populate("enrolledSubjects", "name")
+      .populate("userId", "email name"); // Populate userId for email
     res.status(201).json({
       message: "Student added successfully",
       student: populatedStudent,
     });
   } catch (error) {
     console.error("addStudent error:", error);
+    if (error.code === 11000) {
+      // MongoDB duplicate key error
+      return res.status(400).json({
+        message: "A user with this email already exists",
+      });
+    }
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -64,7 +77,8 @@ const getAllStudents = async (req, res) => {
   try {
     const students = await Student.find()
       .populate("enrolledSubjects", "name")
-      .populate("department", "name");
+      .populate("department", "name")
+      .populate("userId", "email name"); // Populate userId for email
     res.json(students);
   } catch (error) {
     console.error("getAllStudents error:", error);
@@ -80,24 +94,29 @@ const addTeacher = async (req, res) => {
         message: "Email, password, and name are required",
       });
     }
-    let user = await User.findOne({ email });
-    if (user && user.role !== "teacher") {
+
+    // Check if email already exists (case-insensitive)
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (user) {
       return res.status(400).json({
-        message: "Email is already associated with a different role",
+        message: "A user with this email already exists",
       });
     }
-    if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      user = new User({
-        email,
-        password: hashedPassword,
-        role: "teacher",
-        name,
-      });
-      await user.save();
-    }
-    const teacher = new Teacher({ userId: user._id, name });
+
+    // Create new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      email: email.toLowerCase(), // Store email in lowercase
+      password: hashedPassword,
+      role: "teacher",
+      name,
+    });
+    await newUser.save();
+
+    // Create new teacher
+    const teacher = new Teacher({ userId: newUser._id, name });
     await teacher.save();
+
     const populatedTeacher = await Teacher.findById(teacher._id).populate(
       "assignedSubjects",
       "name"
@@ -108,6 +127,12 @@ const addTeacher = async (req, res) => {
     });
   } catch (error) {
     console.error("addTeacher error:", error);
+    if (error.code === 11000) {
+      // MongoDB duplicate key error
+      return res.status(400).json({
+        message: "A user with this email already exists",
+      });
+    }
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -297,6 +322,16 @@ const getAllDepartments = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    console.error("getAllUsers error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 module.exports = {
   addStudent,
   addTeacher,
@@ -308,4 +343,5 @@ module.exports = {
   getAllTeachers,
   getAllSubjects,
   getAllDepartments,
+  getAllUsers,
 };

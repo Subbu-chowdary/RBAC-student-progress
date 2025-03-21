@@ -1,5 +1,21 @@
+// college-portal/client/src/redux/slices/adminSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../services/api";
+
+// Fetch all users (admins, teachers, students)
+export const fetchUsers = createAsyncThunk(
+  "admin/fetchUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/admin/users");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: "Failed to fetch users" }
+      );
+    }
+  }
+);
 
 export const fetchStudents = createAsyncThunk(
   "admin/fetchStudents",
@@ -150,12 +166,34 @@ const adminSlice = createSlice({
     students: [],
     teachers: [],
     subjects: [],
+    users: [],
     departments: [],
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    // Optional: Add a reducer to clear errors
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
+    // Fetch Users
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch users";
+      });
+
+    // Fetch Students
     builder
       .addCase(fetchStudents.pending, (state) => {
         state.loading = true;
@@ -163,90 +201,119 @@ const adminSlice = createSlice({
       })
       .addCase(fetchStudents.fulfilled, (state, action) => {
         state.loading = false;
-        state.students = action.payload;
+        state.students = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(fetchStudents.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to fetch students";
-      })
+        state.error = action.payload?.message || "Failed to fetch students";
+      });
+
+    // Fetch Teachers
+    builder
       .addCase(fetchTeachers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchTeachers.fulfilled, (state, action) => {
         state.loading = false;
-        state.teachers = action.payload;
+        state.teachers = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(fetchTeachers.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to fetch teachers";
-      })
+        state.error = action.payload?.message || "Failed to fetch teachers";
+      });
+
+    // Fetch Subjects
+    builder
       .addCase(fetchSubjects.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchSubjects.fulfilled, (state, action) => {
         state.loading = false;
-        state.subjects = action.payload;
+        state.subjects = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(fetchSubjects.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to fetch subjects";
-      })
+        state.error = action.payload?.message || "Failed to fetch subjects";
+      });
+
+    // Fetch Departments
+    builder
       .addCase(fetchDepartments.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchDepartments.fulfilled, (state, action) => {
         state.loading = false;
-        state.departments = action.payload;
+        state.departments = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(fetchDepartments.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to fetch departments";
-      })
+        state.error = action.payload?.message || "Failed to fetch departments";
+      });
+
+    // Add Student
+    builder
       .addCase(addStudent.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(addStudent.fulfilled, (state, action) => {
         state.loading = false;
-        state.students.push(action.payload);
+        // Avoid duplicates by checking if the student already exists
+        const existingIndex = state.students.findIndex(
+          (s) => s._id === action.payload._id
+        );
+        if (existingIndex !== -1) {
+          state.students[existingIndex] = action.payload;
+        } else {
+          state.students.push(action.payload);
+        }
+        // Optionally update users array if needed
+        const userExists = state.users.some(
+          (u) => u._id === action.payload.userId?._id
+        );
+        if (!userExists && action.payload.userId) {
+          state.users.push(action.payload.userId);
+        }
       })
       .addCase(addStudent.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to add student";
-      })
+        state.error = action.payload?.message || "Failed to add student";
+      });
+
+    // Add Teacher
+    builder
       .addCase(addTeacher.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(addTeacher.fulfilled, (state, action) => {
         state.loading = false;
-        state.teachers.push(action.payload);
+        const existingIndex = state.teachers.findIndex(
+          (t) => t._id === action.payload._id
+        );
+        if (existingIndex !== -1) {
+          state.teachers[existingIndex] = action.payload;
+        } else {
+          state.teachers.push(action.payload);
+        }
+        // Optionally update users array
+        const userExists = state.users.some(
+          (u) => u._id === action.payload.userId?._id
+        );
+        if (!userExists && action.payload.userId) {
+          state.users.push(action.payload.userId);
+        }
       })
       .addCase(addTeacher.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to add teacher";
-      })
+        state.error = action.payload?.message || "Failed to add teacher";
+      });
+
+    // Add Department
+    builder
       .addCase(addDepartment.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -257,11 +324,11 @@ const adminSlice = createSlice({
       })
       .addCase(addDepartment.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to add department";
-      })
+        state.error = action.payload?.message || "Failed to add department";
+      });
+
+    // Add Subject
+    builder
       .addCase(addSubject.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -272,11 +339,11 @@ const adminSlice = createSlice({
       })
       .addCase(addSubject.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to add subject";
-      })
+        state.error = action.payload?.message || "Failed to add subject";
+      });
+
+    // Assign Teacher to Subject
+    builder
       .addCase(assignTeacherToSubject.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -286,15 +353,17 @@ const adminSlice = createSlice({
         const index = state.subjects.findIndex(
           (s) => s._id === action.payload._id
         );
-        if (index !== -1) state.subjects[index] = action.payload;
+        if (index !== -1) {
+          state.subjects[index] = action.payload;
+        }
       })
       .addCase(assignTeacherToSubject.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to assign teacher";
-      })
+        state.error = action.payload?.message || "Failed to assign teacher";
+      });
+
+    // Add Marks
+    builder
       .addCase(addMarks.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -317,12 +386,12 @@ const adminSlice = createSlice({
       })
       .addCase(addMarks.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          action.error?.message ||
-          "Failed to add marks";
+        state.error = action.payload?.message || "Failed to add marks";
       });
   },
 });
+
+// Export the clearError action for use in components
+export const { clearError } = adminSlice.actions;
 
 export default adminSlice.reducer;
