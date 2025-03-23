@@ -1,8 +1,15 @@
 // college-portal/client/src/components/Sidebar.js
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/slices/authSlice"; // Import logout action
 
-const Sidebar = ({ role }) => {
+const Sidebar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth); // Get user from Redux store
+  const role = user?.role; // Get role from user object
+
   const commonLinks = [
     { path: "/", label: "Home" },
     { path: "/profile", label: "Profile" },
@@ -43,6 +50,11 @@ const Sidebar = ({ role }) => {
 
   const allLinks = [...commonLinks, ...roleSpecificLinks];
 
+  const handleLogout = () => {
+    dispatch(logout()); // Dispatch logout action to clear Redux state and localStorage
+    navigate("/login"); // Redirect to login page
+  };
+
   return (
     <div className="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white p-4 z-20">
       <h2 className="text-2xl font-bold mb-6">
@@ -70,9 +82,7 @@ const Sidebar = ({ role }) => {
           ))}
           <li>
             <button
-              onClick={() => {
-                console.log("Logout clicked");
-              }}
+              onClick={handleLogout}
               className="block w-full text-left p-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors"
             >
               Logout
