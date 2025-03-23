@@ -292,13 +292,17 @@ const addMarks = async (req, res) => {
 
 const getAllTeachers = async (req, res) => {
   try {
-    const teachers = await Teacher.find().populate("assignedSubjects", "name");
+    const teachers = await Teacher.find()
+      .populate("userId", "email") // Populate email from User
+      .populate("assignedSubjects", "name");
     res.json(teachers);
   } catch (error) {
     console.error("getAllTeachers error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+module.exports = { getAllTeachers };
 
 const getAllSubjects = async (req, res) => {
   try {

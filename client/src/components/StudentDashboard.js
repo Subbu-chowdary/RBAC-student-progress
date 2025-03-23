@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMarks, fetchWeeklyReport } from "../redux/slices/studentSlice";
+import Sidebar from "../components/Sidebar";
 
 const StudentDashboard = () => {
   const dispatch = useDispatch();
@@ -209,67 +210,152 @@ const StudentDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-black pt-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-          Student Dashboard
-        </h1>
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Sidebar */}
+      <Sidebar role="student" />
 
-        {/* Loading and Error Messages */}
-        {loading && (
-          <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
-        )}
-        {error && (
-          <p className="text-red-500 dark:text-red-400 mb-4">Error: {error}</p>
-        )}
+      {/* Main Content */}
+      <div className="flex-1 p-6 ml-64">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+            Student Dashboard
+          </h1>
 
-        {/* Subject Marks Table */}
-        <div className="bg-white dark:bg-black p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-            Subject Marks
-          </h2>
-          {marks?.length > 0 ? (
-            <div>
-              <p className="font-bold text-gray-700 dark:text-white mb-4">
-                Each Category Total Marks: {marksTotal}
-              </p>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-gray-200 dark:bg-black">
-                      <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px] sticky left-0 z-10 bg-gray-200 dark:bg-black">
-                        Subject
-                      </th>
-                      {marksDates.map((date) => (
-                        <th
-                          key={date}
-                          className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px]"
-                        >
-                          {date}
+          {/* Loading and Error Messages */}
+          {loading && (
+            <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
+          )}
+          {error && (
+            <p className="text-red-500 dark:text-red-400 mb-4">
+              Error: {error}
+            </p>
+          )}
+
+          {/* Subject Marks Table */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+              Subject Marks
+            </h2>
+            {marks?.length > 0 ? (
+              <div>
+                <p className="font-bold text-gray-700 dark:text-white mb-4">
+                  Each Category Total Marks: {marksTotal}
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-200 dark:bg-gray-700">
+                        <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px] sticky left-0 z-10 bg-gray-200 dark:bg-gray-700">
+                          Subject
                         </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(marksGrouped).map(
-                      ([subjectId, { name, marksByDate }]) => (
+                        {marksDates.map((date) => (
+                          <th
+                            key={date}
+                            className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px]"
+                          >
+                            {date}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(marksGrouped).map(
+                        ([subjectId, { name, marksByDate }]) => (
+                          <tr
+                            key={subjectId}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-800"
+                          >
+                            <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white sticky left-0 z-10 bg-white dark:bg-gray-800">
+                              {name}
+                            </td>
+                            {marksDates.map((date) => (
+                              <td
+                                key={date}
+                                className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white"
+                              >
+                                {marksByDate[date] ? (
+                                  <span>
+                                    {marksByDate[date].marks} ▼{" "}
+                                    {marksByDate[date].percentage}
+                                  </span>
+                                ) : (
+                                  "-"
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <p className="text-gray-700 dark:text-white">
+                No marks available.
+              </p>
+            )}
+          </div>
+
+          {/* Weekly Marks Table */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+              Weekly Marks Averages
+            </h2>
+            <div className="mb-4">
+              <label className="text-gray-700 dark:text-white mr-2">
+                Select Week Starting Date (Monday):
+              </label>
+              <input
+                type="date"
+                value={weekStartDate}
+                onChange={(e) => {
+                  const selectedDate = new Date(e.target.value);
+                  const dayOfWeek = selectedDate.getDay();
+                  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday
+                  selectedDate.setDate(selectedDate.getDate() + diff);
+                  setWeekStartDate(selectedDate.toISOString().split("T")[0]);
+                }}
+                className="p-2 border-2 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
+              />
+            </div>
+            {marks?.length > 0 && weeks.length > 0 ? (
+              <div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-200 dark:bg-gray-700">
+                        <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px] sticky left-0 z-10 bg-gray-200 dark:bg-gray-700">
+                          Subject
+                        </th>
+                        {weeks.map((week, index) => (
+                          <th
+                            key={index}
+                            className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px]"
+                          >
+                            {week.start.toLocaleDateString()} -{" "}
+                            {week.end.toLocaleDateString()}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {weeklyAverages.map(({ subjectId, name, weeklyData }) => (
                         <tr
                           key={subjectId}
                           className="hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
-                          <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white sticky left-0 z-10 bg-white dark:bg-black">
+                          <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white sticky left-0 z-10 bg-white dark:bg-gray-800">
                             {name}
                           </td>
-                          {marksDates.map((date) => (
+                          {weeklyData.map((data, index) => (
                             <td
-                              key={date}
+                              key={index}
                               className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white"
                             >
-                              {marksByDate[date] ? (
+                              {data.averageMarks !== "-" ? (
                                 <span>
-                                  {marksByDate[date].marks} ▼{" "}
-                                  {marksByDate[date].percentage}
+                                  {data.averageMarks} ▼ {data.percentage}
                                 </span>
                               ) : (
                                 "-"
@@ -277,94 +363,17 @@ const StudentDashboard = () => {
                             </td>
                           ))}
                         </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <p className="text-gray-700 dark:text-white">No marks available.</p>
-          )}
-        </div>
-
-        {/* Weekly Marks Table */}
-        <div className="bg-white dark:bg-black p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-            Weekly Marks Averages
-          </h2>
-          <div className="mb-4">
-            <label className="text-gray-700 dark:text-white mr-2">
-              Select Week Starting Date (Monday):
-            </label>
-            <input
-              type="date"
-              value={weekStartDate}
-              onChange={(e) => {
-                const selectedDate = new Date(e.target.value);
-                // Ensure the selected date is a Monday
-                const dayOfWeek = selectedDate.getDay();
-                const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday
-                selectedDate.setDate(selectedDate.getDate() + diff);
-                setWeekStartDate(selectedDate.toISOString().split("T")[0]);
-              }}
-              className="p-2 border-2 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
-            />
-          </div>
-          {marks?.length > 0 && weeks.length > 0 ? (
-            <div>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-gray-200 dark:bg-black">
-                      <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px] sticky left-0 z-10 bg-gray-200 dark:bg-black">
-                        Subject
-                      </th>
-                      {weeks.map((week, index) => (
-                        <th
-                          key={index}
-                          className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px]"
-                        >
-                          {week.start.toLocaleDateString()} -{" "}
-                          {week.end.toLocaleDateString()}
-                        </th>
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {weeklyAverages.map(({ subjectId, name, weeklyData }) => (
-                      <tr
-                        key={subjectId}
-                        className="hover:bg-gray-100 dark:hover:bg-gray-800"
-                      >
-                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white sticky left-0 z-10 bg-white dark:bg-black">
-                          {name}
-                        </td>
-                        {weeklyData.map((data, index) => (
-                          <td
-                            key={index}
-                            className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white"
-                          >
-                            {data.averageMarks !== "-" ? (
-                              <span>
-                                {data.averageMarks} ▼ {data.percentage}
-                              </span>
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          ) : (
-            <p className="text-gray-700 dark:text-white">
-              No weekly averages available.
-            </p>
-          )}
+            ) : (
+              <p className="text-gray-700 dark:text-white">
+                No weekly averages available.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
