@@ -1,4 +1,3 @@
-// college-portal/client/src/pages/StudentDashboard.js
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMarks, fetchWeeklyReport } from "../redux/slices/studentSlice";
@@ -9,60 +8,49 @@ const StudentDashboard = () => {
   const { marks, weeklyReport, loading, error } = useSelector(
     (state) => state.student
   );
-  const [days, setDays] = useState(7); // Default to 7 days for weekly report
+  const [days] = useState(7);
   const [weekStartDate, setWeekStartDate] = useState(() => {
-    // Default to the start of the current week (Monday)
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
-    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday
+    const dayOfWeek = today.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
     const monday = new Date(today);
     monday.setDate(today.getDate() + diff);
     monday.setHours(0, 0, 0, 0);
-    return monday.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    return monday.toISOString().split("T")[0];
   });
 
   useEffect(() => {
-    // Initialize dark mode on mount
     const isDark = localStorage.getItem("darkMode") === "true";
     document.documentElement.classList.toggle("dark", isDark);
-
-    // Fetch marks and weekly report
     dispatch(fetchMarks());
-    dispatch(fetchWeeklyReport({ days }));
-  }, [dispatch, days]);
+    dispatch(fetchWeeklyReport({ days, startDate: weekStartDate }));
+  }, [dispatch, days, weekStartDate]);
 
-  // Group marks by subject and prepare table data, averaging marks on the same day
   const getGroupedMarks = (marksData) => {
     if (!marksData || !Array.isArray(marksData)) {
       return { grouped: {}, allDates: [], totalMarks: 100 };
     }
-
-    // First, group marks by subject and date to handle duplicates
     const intermediateGrouped = marksData.reduce((acc, mark) => {
-      const subjectId = mark?.subjectId?._id || mark?.subjectId || "unknown";
+      const subjectId = mark?.subjectId?._id ?? mark?.subjectId ?? "unknown";
       const dateKey = mark?.testDate
         ? new Date(mark.testDate).toLocaleDateString()
         : "Unknown Date";
-
-      if (!acc[subjectId]) {
-        acc[subjectId] = {};
-      }
+      if (!acc[subjectId]) acc[subjectId] = {};
       if (!acc[subjectId][dateKey]) {
         acc[subjectId][dateKey] = {
           marks: [],
-          totalMarks: mark?.totalMarks || 100,
-          subjectName: mark?.subjectId?.name || "Unknown Subject",
+          totalMarks: mark?.totalMarks ?? 100,
+          subjectName: mark?.subjectId?.name ?? "Unknown Subject",
         };
       }
-      acc[subjectId][dateKey].marks.push(mark?.marks || 0);
+      acc[subjectId][dateKey].marks.push(mark?.marks ?? 0);
       return acc;
     }, {});
 
-    // Now, average the marks for each subject and date
     const grouped = {};
     Object.entries(intermediateGrouped).forEach(([subjectId, dates]) => {
       grouped[subjectId] = {
-        name: Object.values(dates)[0].subjectName,
+        name: Object.values(dates)[0]?.subjectName ?? "Unknown Subject",
         marksByDate: {},
       };
       Object.entries(dates).forEach(([dateKey, { marks, totalMarks }]) => {
@@ -70,10 +58,9 @@ const StudentDashboard = () => {
         grouped[subjectId].marksByDate[dateKey] = {
           marks: parseFloat(avgMarks.toFixed(2)),
           totalMarks,
-          percentage:
-            avgMarks && totalMarks
-              ? ((avgMarks / totalMarks) * 100).toFixed(0) + "%"
-              : "N/A",
+          percentage: totalMarks
+            ? `${((avgMarks / totalMarks) * 100).toFixed(0)}%`
+            : "N/A",
         };
       });
     });
@@ -90,26 +77,21 @@ const StudentDashboard = () => {
       marksData.length > 0 && marksData[0]?.totalMarks
         ? marksData[0].totalMarks
         : 100;
-
     return { grouped, allDates, totalMarks };
   };
 
-  // Calculate weekly averages for each subject, week by week
   const getWeeklyAverages = (marksData, startDate) => {
     if (!marksData || !Array.isArray(marksData) || !startDate) {
       return { weeks: [], subjects: [] };
     }
-
-    // Parse the start date
     const weekStart = new Date(startDate);
     weekStart.setHours(0, 0, 0, 0);
 
-    // Group marks by subject
     const groupedBySubject = marksData.reduce((acc, mark) => {
-      const subjectId = mark?.subjectId?._id || mark?.subjectId || "unknown";
+      const subjectId = mark?.subjectId?._id ?? mark?.subjectId ?? "unknown";
       if (!acc[subjectId]) {
         acc[subjectId] = {
-          name: mark?.subjectId?.name || "Unknown Subject",
+          name: mark?.subjectId?.name ?? "Unknown Subject",
           marks: [],
         };
       }
@@ -117,80 +99,47 @@ const StudentDashboard = () => {
       return acc;
     }, {});
 
-    // Define weeks starting from the selected date
     const weeks = [];
-    const earliestDate = new Date(
-      Math.min(
-        ...marksData
-          .filter((mark) => mark?.testDate)
-          .map((mark) => new Date(mark.testDate).getTime())
-      )
-    );
-    const latestDate = new Date(
-      Math.max(
-        ...marksData
-          .filter((mark) => mark?.testDate)
-          .map((mark) => new Date(mark.testDate).getTime())
-      )
-    );
+    const validDates = marksData
+      .filter((mark) => mark?.testDate)
+      .map((mark) => new Date(mark.testDate).getTime());
+    if (validDates.length === 0) return { weeks: [], subjects: [] };
 
+    const earliestDate = new Date(Math.min(...validDates));
+    const latestDate = new Date(Math.max(...validDates));
     let currentWeekStart = new Date(weekStart);
     while (currentWeekStart <= latestDate) {
       const weekEnd = new Date(currentWeekStart);
-      weekEnd.setDate(weekEnd.getDate() + 6); // End of the week (7 days total)
-
+      weekEnd.setDate(weekEnd.getDate() + 6);
       if (weekEnd >= earliestDate) {
         weeks.push({
           start: new Date(currentWeekStart),
           end: new Date(weekEnd),
         });
       }
-      currentWeekStart.setDate(currentWeekStart.getDate() + 7); // Move to next week
+      currentWeekStart.setDate(currentWeekStart.getDate() + 7);
     }
 
-    // Calculate averages for each subject for each week
     const weeklyAverages = Object.entries(groupedBySubject).map(
       ([subjectId, { name, marks }]) => {
         const weeklyData = weeks.map((week) => {
-          // Filter marks for this week
           const weekMarks = marks.filter((mark) => {
             const testDate = new Date(mark.testDate);
             return testDate >= week.start && testDate <= week.end;
           });
-
-          if (weekMarks.length === 0) {
+          if (weekMarks.length === 0)
             return { averageMarks: "-", percentage: "-" };
-          }
-
-          // Group by date to handle duplicates
-          const marksByDate = weekMarks.reduce((acc, mark) => {
-            const dateKey = new Date(mark.testDate).toLocaleDateString();
-            if (!acc[dateKey]) {
-              acc[dateKey] = [];
-            }
-            acc[dateKey].push(mark.marks);
-            return acc;
-          }, {});
-
-          // Average marks per day
-          const averagedMarksByDate = Object.values(marksByDate).map(
-            (dailyMarks) =>
-              dailyMarks.reduce((sum, m) => sum + m, 0) / dailyMarks.length
-          );
-
-          // Calculate weekly average
-          const totalMarks = weekMarks[0]?.totalMarks || 100;
-          const weeklyAverage =
-            averagedMarksByDate.reduce((sum, avg) => sum + avg, 0) /
-            averagedMarksByDate.length;
-
+          const totalMarks = weekMarks[0]?.totalMarks ?? 100;
+          const avgMarks =
+            weekMarks.reduce((sum, m) => sum + (m.marks || 0), 0) /
+            weekMarks.length;
           return {
-            averageMarks: parseFloat(weeklyAverage.toFixed(2)),
-            percentage:
-              parseFloat(((weeklyAverage / totalMarks) * 100).toFixed(0)) + "%",
+            averageMarks: parseFloat(avgMarks.toFixed(2)),
+            percentage: totalMarks
+              ? `${((avgMarks / totalMarks) * 100).toFixed(0)}%`
+              : "-",
           };
         });
-
         return { subjectId, name, weeklyData };
       }
     );
@@ -201,57 +150,50 @@ const StudentDashboard = () => {
   const {
     grouped: marksGrouped,
     allDates: marksDates,
-    totalMarks: marksTotal,
+    totalMarks,
   } = getGroupedMarks(marks);
-
   const { weeks, subjects: weeklyAverages } = getWeeklyAverages(
     marks,
     weekStartDate
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Sidebar */}
+    <div className="flex min-h-screen bg-white transition-colors duration-300">
       <Sidebar role="student" />
-
-      {/* Main Content */}
-      <div className="flex-1 p-6 ml-64">
+      <div className="flex-1 p-8 ml-64">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+          <h1 className="text-3xl font-bold text-black mb-8">
             Student Dashboard
           </h1>
 
-          {/* Loading and Error Messages */}
           {loading && (
-            <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
+            <p className="text-blue-500 mb-6 font-medium">Loading...</p>
           )}
           {error && (
-            <p className="text-red-500 dark:text-red-400 mb-4">
-              Error: {error}
-            </p>
+            <p className="text-red-500 mb-6 font-medium">Error: {error}</p>
           )}
 
           {/* Subject Marks Table */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg mb-8 border border-gray-200">
+            <h2 className="text-2xl font-semibold text-black mb-4 bg-white">
               Subject Marks
             </h2>
             {marks?.length > 0 ? (
               <div>
-                <p className="font-bold text-gray-700 dark:text-white mb-4">
-                  Each Category Total Marks: {marksTotal}
+                <p className="font-medium text-black mb-4">
+                  Each Category Total Marks: {totalMarks}
                 </p>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-200 dark:bg-gray-700">
-                        <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px] sticky left-0 z-10 bg-gray-200 dark:bg-gray-700">
+                      <tr className="bg-white border-b-2 border-gray-200">
+                        <th className="px-4 py-3 text-left text-black min-w-[150px] sticky left-0 z-10 font-semibold border-r border-gray-200">
                           Subject
                         </th>
                         {marksDates.map((date) => (
                           <th
                             key={date}
-                            className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px]"
+                            className="px-4 py-3 text-left text-black min-w-[150px] font-semibold border-r border-gray-200"
                           >
                             {date}
                           </th>
@@ -261,21 +203,19 @@ const StudentDashboard = () => {
                     <tbody>
                       {Object.entries(marksGrouped).map(
                         ([subjectId, { name, marksByDate }]) => (
-                          <tr
-                            key={subjectId}
-                            className="hover:bg-gray-100 dark:hover:bg-gray-800"
-                          >
-                            <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white sticky left-0 z-10 bg-white dark:bg-gray-800">
+                          <tr key={subjectId}>
+                            <td className="px-4 py-3 text-black sticky left-0 z-10 bg-white border border-gray-200">
                               {name}
                             </td>
                             {marksDates.map((date) => (
                               <td
                                 key={date}
-                                className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white"
+                                className="px-4 py-3 text-black border border-gray-200"
                               >
                                 {marksByDate[date] ? (
                                   <span>
-                                    {marksByDate[date].marks} ▼{" "}
+                                    {marksByDate[date].marks}{" "}
+                                    <span className="text-blue-500">▼</span>{" "}
                                     {marksByDate[date].percentage}
                                   </span>
                                 ) : (
@@ -291,19 +231,17 @@ const StudentDashboard = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-700 dark:text-white">
-                No marks available.
-              </p>
+              <p className="text-black">No marks available.</p>
             )}
           </div>
 
           {/* Weekly Marks Table */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+            <h2 className="text-2xl font-semibold text-black mb-4">
               Weekly Marks Averages
             </h2>
-            <div className="mb-4">
-              <label className="text-gray-700 dark:text-white mr-2">
+            <div className="mb-6">
+              <label className="text-black mr-2 font-medium">
                 Select Week Starting Date (Monday):
               </label>
               <input
@@ -312,11 +250,11 @@ const StudentDashboard = () => {
                 onChange={(e) => {
                   const selectedDate = new Date(e.target.value);
                   const dayOfWeek = selectedDate.getDay();
-                  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust to Monday
+                  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                   selectedDate.setDate(selectedDate.getDate() + diff);
                   setWeekStartDate(selectedDate.toISOString().split("T")[0]);
                 }}
-                className="p-2 border-2 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
+                className="p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-black"
               />
             </div>
             {marks?.length > 0 && weeks.length > 0 ? (
@@ -324,14 +262,14 @@ const StudentDashboard = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-200 dark:bg-gray-700">
-                        <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px] sticky left-0 z-10 bg-gray-200 dark:bg-gray-700">
+                      <tr className="bg-white border-b-2 border-gray-200">
+                        <th className="px-4 py-3 text-left text-black min-w-[150px] sticky left-0 z-10 font-semibold border-r border-gray-200">
                           Subject
                         </th>
                         {weeks.map((week, index) => (
                           <th
                             key={index}
-                            className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white min-w-[120px]"
+                            className="px-4 py-3 text-left text-black min-w-[150px] font-semibold border-r border-gray-200"
                           >
                             {week.start.toLocaleDateString()} -{" "}
                             {week.end.toLocaleDateString()}
@@ -341,21 +279,20 @@ const StudentDashboard = () => {
                     </thead>
                     <tbody>
                       {weeklyAverages.map(({ subjectId, name, weeklyData }) => (
-                        <tr
-                          key={subjectId}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-800"
-                        >
-                          <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white sticky left-0 z-10 bg-white dark:bg-gray-800">
+                        <tr key={subjectId}>
+                          <td className="px-4 py-3 text-black sticky left-0 z-10 bg-white border border-gray-200">
                             {name}
                           </td>
                           {weeklyData.map((data, index) => (
                             <td
                               key={index}
-                              className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white"
+                              className="px-4 py-3 text-black border border-gray-200"
                             >
                               {data.averageMarks !== "-" ? (
                                 <span>
-                                  {data.averageMarks} ▼ {data.percentage}
+                                  {data.averageMarks}{" "}
+                                  <span className="text-blue-500">▼</span>{" "}
+                                  {data.percentage}
                                 </span>
                               ) : (
                                 "-"
@@ -369,9 +306,7 @@ const StudentDashboard = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-700 dark:text-white">
-                No weekly averages available.
-              </p>
+              <p className="text-black">No weekly averages available.</p>
             )}
           </div>
         </div>

@@ -1,14 +1,17 @@
 // college-portal/client/src/components/Sidebar.js
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/slices/authSlice"; // Import logout action
+import { logout } from "../redux/slices/authSlice";
+import UploadDataModal from "../components/admin/UploadDataModal";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth); // Get user from Redux store
-  const role = user?.role; // Get role from user object
+  const { user } = useSelector((state) => state.auth);
+  const role = user?.role;
+
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const commonLinks = [
     { path: "/", label: "Home" },
@@ -17,8 +20,8 @@ const Sidebar = () => {
 
   const adminLinks = [
     { path: "/admin", label: "Admin Dashboard" },
-    { path: "/admin/users", label: "Manage Users" },
-    { path: "/admin/reports", label: "Reports" },
+    { path: "/admin/reports", label: "Reports" }, // Correct link to /admin/reports
+    { label: "Upload Data (Modal)", action: () => setIsUploadModalOpen(true) },
   ];
 
   const teacherLinks = [
@@ -51,8 +54,8 @@ const Sidebar = () => {
   const allLinks = [...commonLinks, ...roleSpecificLinks];
 
   const handleLogout = () => {
-    dispatch(logout()); // Dispatch logout action to clear Redux state and localStorage
-    navigate("/login"); // Redirect to login page
+    dispatch(logout());
+    navigate("/login");
   };
 
   return (
@@ -64,20 +67,29 @@ const Sidebar = () => {
       </h2>
       <nav>
         <ul className="space-y-2">
-          {allLinks.map((link) => (
-            <li key={link.path}>
-              <NavLink
-                to={link.path}
-                className={({ isActive }) =>
-                  `block p-2 rounded-lg transition-colors ${
-                    isActive
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-300 hover:bg-gray-700"
-                  }`
-                }
-              >
-                {link.label}
-              </NavLink>
+          {allLinks.map((link, index) => (
+            <li key={link.path || index}>
+              {link.path ? (
+                <NavLink
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `block p-2 rounded-lg transition-colors ${
+                      isActive
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-300 hover:bg-gray-700"
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              ) : (
+                <button
+                  onClick={link.action}
+                  className="block w-full text-left p-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors"
+                >
+                  {link.label}
+                </button>
+              )}
             </li>
           ))}
           <li>
@@ -90,6 +102,10 @@ const Sidebar = () => {
           </li>
         </ul>
       </nav>
+      <UploadDataModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
     </div>
   );
 };
