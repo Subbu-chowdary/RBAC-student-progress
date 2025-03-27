@@ -1,15 +1,15 @@
-// college-portal/client/src/redux/slices/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../services/api";
 
 // Thunk to login a user
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ identifier, password }, { rejectWithValue }) => {
+    // Changed email to identifier
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", { identifier, password });
       const { token, role, name } = response.data;
-      localStorage.setItem("token", token); // Store the token in localStorage
+      localStorage.setItem("token", token);
       return { token, role, name };
     } catch (error) {
       return rejectWithValue(
@@ -19,7 +19,7 @@ export const login = createAsyncThunk(
   }
 );
 
-// Thunk to register a user
+// Thunk to register a user (unchanged)
 export const register = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
@@ -34,7 +34,7 @@ export const register = createAsyncThunk(
   }
 );
 
-// Thunk to check if the user is authenticated (e.g., on app load)
+// Thunk to check if the user is authenticated (unchanged)
 export const checkAuth = createAsyncThunk(
   "auth/checkAuth",
   async (_, { rejectWithValue }) => {
@@ -43,14 +43,13 @@ export const checkAuth = createAsyncThunk(
       if (!token) {
         throw new Error("No token found");
       }
-      // Make a request to a protected endpoint to verify the token
       const response = await api.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { role, name } = response.data;
       return { token, role, name };
     } catch (error) {
-      localStorage.removeItem("token"); // Remove invalid token
+      localStorage.removeItem("token");
       return rejectWithValue(
         error.response?.data || { message: "Authentication failed" }
       );
@@ -61,11 +60,11 @@ export const checkAuth = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null, // { role, name }
+    user: null,
     token: localStorage.getItem("token") || null,
     loading: false,
     error: null,
-    isAuthenticated: false, // Track authentication status
+    isAuthenticated: false,
   },
   reducers: {
     logout: (state) => {
@@ -80,7 +79,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Login
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
@@ -97,7 +95,6 @@ const authSlice = createSlice({
         state.error = action.payload.message;
         state.isAuthenticated = false;
       })
-      // Register
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -110,7 +107,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload.message;
       })
-      // Check Auth
       .addCase(checkAuth.pending, (state) => {
         state.loading = true;
         state.error = null;

@@ -1,17 +1,15 @@
-// college-portal/client/src/components/Login.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
 
-  // Initialize dark mode on mount
   useEffect(() => {
     const isDark = localStorage.getItem("darkMode") === "true";
     document.documentElement.classList.toggle("dark", isDark);
@@ -19,44 +17,39 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(login({ email, password }));
+    const result = await dispatch(login({ identifier, password }));
     if (login.fulfilled.match(result)) {
       navigate("/");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-6">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md">
-        {/* Header */}
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-200">
+        <h2 className="text-3xl font-bold text-black mb-6 text-center">
           Login
         </h2>
 
-        {/* Error Message */}
         {error && (
-          <p className="text-red-500 dark:text-red-400 mb-4 text-center">
-            {error}
-          </p>
+          <p className="text-red-500 mb-6 text-center font-medium">{error}</p>
         )}
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-gray-700 dark:text-white mb-1">
-              Email
+            <label className="block text-black mb-2 font-medium">
+              Name or Email
             </label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               required
-              className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
-              placeholder="Enter your email"
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-black placeholder-gray-500"
+              placeholder="Enter your username or email"
             />
           </div>
           <div>
-            <label className="block text-gray-700 dark:text-white mb-1">
+            <label className="block text-black mb-2 font-medium">
               Password
             </label>
             <input
@@ -64,14 +57,14 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-black placeholder-gray-500"
               placeholder="Enter your password"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

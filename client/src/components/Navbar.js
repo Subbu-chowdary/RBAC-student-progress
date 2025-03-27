@@ -1,38 +1,37 @@
-// college-portal/client/src/components/Navbar.js
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  // Initialize dark mode on mount
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => localStorage.getItem("darkMode") === "true"
+  );
+
   useEffect(() => {
-    const isDark = localStorage.getItem("darkMode") === "true";
-    document.documentElement.classList.toggle("dark", isDark);
-  }, []);
+    document.documentElement.classList.toggle("dark", isDarkMode);
+    localStorage.setItem("darkMode", isDarkMode);
+  }, [isDarkMode]);
+
+  const handleToggle = () => {
+    setIsDarkMode((prev) => !prev);
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Left Side: Empty */}
           <div></div>
-
-          {/* Right Side: Dark Mode Toggle and Profile Icon */}
           <div className="flex items-center space-x-4">
             {/* Dark Mode Toggle */}
-            <label className="dark-mode-toggle flex items-center">
+            <label className="toggle-container flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                checked={localStorage.getItem("darkMode") === "true"}
-                onChange={() => {
-                  const isDark = localStorage.getItem("darkMode") === "true";
-                  localStorage.setItem("darkMode", !isDark);
-                  document.documentElement.classList.toggle("dark", !isDark);
-                }}
-                className="toggle-input"
+                checked={isDarkMode}
+                onChange={handleToggle}
+                className="sr-only"
               />
               <span className="toggle-slider"></span>
-              <span className="ml-2 text-sm font-medium text-gray-600 dark:text-white">
-                {localStorage.getItem("darkMode") === "true" ? "Dark" : "Light"}
+              <span className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-200">
+                {isDarkMode ? "Dark" : "Light"}
               </span>
             </label>
 

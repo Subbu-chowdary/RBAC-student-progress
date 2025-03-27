@@ -1,5 +1,3 @@
-/* college-portal/client/src/styles/App.css */
-
 /* Import Tailwind's base styles */
 @tailwind base;
 @tailwind components;
@@ -9,22 +7,22 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Light mode defaults (optional, can be overridden by Tailwind classes) */
+/* Light mode defaults */
 body {
-  background-color: #f3f4f6; /* Equivalent to Tailwind's bg-gray-100 */
-  color: #1f2937; /* Equivalent to Tailwind's text-gray-900 */
+  background-color: #f3f4f6; /* Tailwind's bg-gray-100 */
+  color: #1f2937; /* Tailwind's text-gray-900 */
 }
 
-/* Dark mode styles */
+/* Dark mode base styles */
 .dark {
-  background-color: #000000; /* Black background for the entire app in dark mode */
-  color: #ffffff; /* White text for the entire app in dark mode */
+  background-color: #000000; /* Black background for the app in dark mode */
+  color: #ffffff; /* White text for the app in dark mode */
 }
 
-/* Ensure all elements have white text in dark mode */
+/* Ensure text readability in dark mode (scoped to common elements) */
 .dark h1,
 .dark h2,
 .dark h3,
@@ -33,18 +31,21 @@ body {
 .dark h6,
 .dark p,
 .dark label,
-.dark input,
-.dark textarea,
-.dark select,
 .dark span,
-.dark div,
-.dark a,
-.dark li,
-.dark button {
-  color: #ffffff !important; /* Force white text in dark mode */
+.dark li {
+  color: #ffffff; /* White text in dark mode */
 }
 
-/* Override Tailwind background colors in dark mode */
+/* Input and interactive elements in dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  color: #ffffff; /* White text */
+  background-color: #1f2937; /* Tailwind's gray-800 for contrast */
+  border-color: #374151; /* Tailwind's gray-700 */
+}
+
+/* Force black background for common Tailwind bg classes in dark mode */
 .dark .bg-white,
 .dark .bg-gray-100,
 .dark .bg-gray-200,
@@ -55,66 +56,81 @@ body {
 .dark .bg-gray-700,
 .dark .bg-gray-800,
 .dark .bg-gray-900 {
-  background-color: #000000 !important; /* Force black background in dark mode */
+  background-color: #000000; /* Black background in dark mode */
+  color: #ffffff; /* White text in dark mode */
+}
+.dark .border-gray-200 {
+  color: #ffffff; /* White text in dark mode */
+}
+.hover .bg-gray-50 {
+  background-color: #374151; /* Tailwind's gray-700 */
 }
 
-/* Ensure buttons and links remain visible in dark mode */
+/* Preserve specific colors for visibility in dark mode */
 .dark .bg-blue-500 {
-  background-color: #3b82f6 !important; /* Keep Tailwind's blue-500 */
+  background-color: #3b82f6; /* Tailwind's blue-500 */
 }
 .dark .bg-blue-600 {
-  background-color: #2563eb !important; /* Keep Tailwind's blue-600 */
+  background-color: #2563eb; /* Tailwind's blue-600 */
 }
 .dark .text-blue-500 {
-  color: #3b82f6 !important; /* Keep Tailwind's blue-500 for text */
+  color: #3b82f6; /* Tailwind's blue-500 */
 }
 .dark .text-blue-400 {
-  color: #60a5fa !important; /* Keep Tailwind's blue-400 for text */
+  color: #60a5fa; /* Tailwind's blue-400 */
 }
 
-/* Dark Mode Toggler (Custom styles for animation) */
-.dark-mode-toggle {
+/* Dark Mode Toggle Styles */
+.toggle-container {
   display: flex;
   align-items: center;
   position: relative;
 }
 
-.dark-mode-toggle input {
+.toggle-container input {
+  position: absolute;
   opacity: 0;
   width: 0;
   height: 0;
 }
 
+/* Slider background */
 .toggle-slider {
   position: relative;
-  width: 50px;
-  height: 26px;
-  background-color: #d1d5db; /* Light gray in light mode */
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  width: 40px; /* Match Navbar.js toggle width */
+  height: 20px; /* Match Navbar.js toggle height */
+  background-color: #d1d5db; /* Tailwind's gray-300 in light mode */
+  border-radius: 9999px; /* Full rounding */
+  transition: background-color 0.3s ease-in-out;
 }
 
+/* Slider knob (circle) */
 .toggle-slider::before {
   content: "";
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  background-color: #ffffff; /* White circle in light mode */
+  top: 2px;
+  left: 2px;
+  width: 16px; /* Slightly smaller than height for padding */
+  height: 16px;
+  background-color: #ffffff; /* White knob */
   border-radius: 50%;
-  transition: transform 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.dark-mode-toggle input:checked + .toggle-slider {
-  background-color: #3b82f6; /* Blue in dark mode (Tailwind's blue-500) */
+/* Checked state for toggle */
+.toggle-container input:checked + .toggle-slider {
+  background-color: #3b82f6; /* Tailwind's blue-500 in dark mode */
 }
 
-.dark-mode-toggle input:checked + .toggle-slider::before {
-  transform: translateX(24px);
-  background-color: #ffffff; /* Keep the circle white in dark mode */
+.toggle-container input:checked + .toggle-slider::before {
+  transform: translateX(20px); /* Move knob to the right */
 }
 
-/* Add any additional custom styles here */
+/* Ensure toggle text remains visible */
+.toggle-container span {
+  margin-left: 8px;
+  font-size: 0.875rem; /* Tailwind's text-sm */
+}
+
+/* Additional custom styles can be added below */

@@ -20,12 +20,10 @@ import "./styles/App.css";
 const PrivateRoute = ({ children, allowedRole }) => {
   const { user } = useSelector((state) => state.auth);
 
-  // If no specific role is provided, allow any authenticated user
   if (!allowedRole) {
     return user ? children : <Navigate to="/login" />;
   }
 
-  // If a specific role is required, check it
   return user && user.role === allowedRole ? (
     children
   ) : (
@@ -34,21 +32,20 @@ const PrivateRoute = ({ children, allowedRole }) => {
 };
 
 function App() {
-  const { user } = useSelector((state) => state.auth); // Check authentication status
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <Router>
       <div className="App">
         <Navbar />
         <Routes>
-          {/* Redirect root to /login if not authenticated, else show Home */}
           <Route
             path="/"
             element={user ? <Home /> : <Navigate to="/login" />}
           />
           <Route path="/login" element={<Login />} />
           <Route
-            path="/admin"
+            path="/admin/*" // Use wildcard to handle nested routes
             element={
               <PrivateRoute allowedRole="admin">
                 <AdminPage />

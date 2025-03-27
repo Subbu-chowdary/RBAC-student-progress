@@ -1,4 +1,3 @@
-// college-portal/client/src/pages/AdminDashboard.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,15 +20,10 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-lg w-full">
+      <div className="bg-white p-6 rounded-lg max-w-lg w-full">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-            {title}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-600 dark:text-gray-300"
-          >
+          <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+          <button onClick={onClose} className="text-gray-600">
             ✕
           </button>
         </div>
@@ -239,98 +233,76 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar role="admin" />
       <div className="flex-1 p-6 ml-64">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
             Admin Dashboard
           </h1>
-          {loading && (
-            <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
-          )}
-          {error && (
-            <p className="text-red-500 dark:text-red-400 mb-4">
-              Error: {error}
-            </p>
-          )}
+          {loading && <p className="text-blue-500 mb-4">Loading...</p>}
+          {error && <p className="text-red-500 mb-4">Error: {error}</p>}
           {validationError && (
-            <p className="text-red-500 dark:text-red-400 mb-4">
-              {validationError}
-            </p>
+            <p className="text-red-500 mb-4">{validationError}</p>
           )}
           {successMessage && (
-            <p className="text-green-500 dark:text-green-400 mb-4">
-              {successMessage}
-            </p>
+            <p className="text-green-500 mb-4">{successMessage}</p>
           )}
 
           {/* Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="bg-white p-6 rounded-lg shadow-md cursor-pointer dark:hover:bg-gray-50"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addStudent: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-800">
                 Add Student
               </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Click to add a new student
-              </p>
+              <p className="text-gray-600">Click to add a new student</p>
             </div>
             <div
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addTeacher: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-800">
                 Add Teacher
               </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Click to add a new teacher
-              </p>
+              <p className="text-gray-600">Click to add a new teacher</p>
             </div>
             <div
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addDepartment: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-800">
                 Add Department
               </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Click to add a new department
-              </p>
+              <p className="text-gray-600">Click to add a new department</p>
             </div>
             <div
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addSubject: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-800">
                 Add Subject
               </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Click to add a new subject
-              </p>
+              <p className="text-gray-600">Click to add a new subject</p>
             </div>
             <div
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addMarks: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                Add Marks
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Click to add student marks
-              </p>
+              <h2 className="text-xl font-semibold text-gray-800">Add Marks</h2>
+              <p className="text-gray-600">Click to add student marks</p>
             </div>
           </div>
 
@@ -370,10 +342,10 @@ const AdminDashboard = () => {
                     }
                   }}
                   required
-                  className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                  className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
                 />
                 {emailValidationMessage.student && (
-                  <p className="text-red-500 dark:text-red-400 mt-1 text-sm">
+                  <p className="text-red-500 mt-1 text-sm">
                     {emailValidationMessage.student}
                   </p>
                 )}
@@ -386,7 +358,7 @@ const AdminDashboard = () => {
                   setNewStudent({ ...newStudent, password: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <input
                 type="text"
@@ -396,7 +368,7 @@ const AdminDashboard = () => {
                   setNewStudent({ ...newStudent, name: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <select
                 value={newStudent.department}
@@ -404,7 +376,7 @@ const AdminDashboard = () => {
                   setNewStudent({ ...newStudent, department: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               >
                 <option value="">Select Department</option>
                 {departments.map((dept) => (
@@ -420,12 +392,12 @@ const AdminDashboard = () => {
                 onChange={(e) =>
                   setNewStudent({ ...newStudent, studentId: e.target.value })
                 }
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <button
                 type="submit"
                 disabled={loading || emailValidationMessage.student !== ""}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Add Student
               </button>
@@ -467,10 +439,10 @@ const AdminDashboard = () => {
                     }
                   }}
                   required
-                  className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                  className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
                 />
                 {emailValidationMessage.teacher && (
-                  <p className="text-red-500 dark:text-red-400 mt-1 text-sm">
+                  <p className="text-red-500 mt-1 text-sm">
                     {emailValidationMessage.teacher}
                   </p>
                 )}
@@ -483,7 +455,7 @@ const AdminDashboard = () => {
                   setNewTeacher({ ...newTeacher, password: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <input
                 type="text"
@@ -493,12 +465,12 @@ const AdminDashboard = () => {
                   setNewTeacher({ ...newTeacher, name: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <button
                 type="submit"
                 disabled={loading || emailValidationMessage.teacher !== ""}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Add Teacher
               </button>
@@ -521,12 +493,12 @@ const AdminDashboard = () => {
                   setNewDepartment({ ...newDepartment, name: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Add Department
               </button>
@@ -549,7 +521,7 @@ const AdminDashboard = () => {
                   setNewSubject({ ...newSubject, name: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <select
                 value={newSubject.departmentId}
@@ -557,7 +529,7 @@ const AdminDashboard = () => {
                   setNewSubject({ ...newSubject, departmentId: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               >
                 <option value="">Select Department</option>
                 {departments.map((dept) => (
@@ -569,7 +541,7 @@ const AdminDashboard = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Add Subject
               </button>
@@ -590,7 +562,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, studentId: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               >
                 <option value="">Select Student</option>
                 {students.map((student) => (
@@ -605,7 +577,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, subjectId: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               >
                 <option value="">Select Subject</option>
                 {subjects.map((subject) => (
@@ -621,7 +593,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, testDate: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <input
                 type="number"
@@ -631,7 +603,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, marks: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <input
                 type="number"
@@ -641,12 +613,12 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, totalMarks: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Add Marks
               </button>
@@ -654,16 +626,16 @@ const AdminDashboard = () => {
           </Modal>
 
           {/* Assign Teacher to Subject */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Assign Teacher to Subject
             </h2>
             {subjects.map((subject) => (
               <div
                 key={subject._id}
-                className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-600"
+                className="flex items-center justify-between p-3 border-b border-gray-200"
               >
-                <p className="text-gray-700 dark:text-white">
+                <p className="text-gray-700">
                   {subject.name} -{" "}
                   {subject.departmentId?.name || "No Department"}
                 </p>
@@ -672,7 +644,7 @@ const AdminDashboard = () => {
                   onChange={(e) =>
                     handleAssignTeacher(subject._id, e.target.value)
                   }
-                  className="p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-400 transition-all"
+                  className="p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
                 >
                   <option value="">Select Teacher</option>
                   {teachers.map((teacher) => (
@@ -685,16 +657,16 @@ const AdminDashboard = () => {
             ))}
           </div>
 
-          {/* Students List
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          {/* Students List */}
+          {/* <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Students List
             </h2>
             <ul className="space-y-2">
               {students.map((student) => (
                 <li
                   key={student._id}
-                  className="p-3 border-b border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white"
+                  className="p-3 border-b border-gray-200 text-gray-700"
                 >
                   {student.name} ({student.studentId}) - Email:{" "}
                   {student.userId?.email || "N/A"} - Department:{" "}
@@ -702,18 +674,18 @@ const AdminDashboard = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Teachers List */}
-          {/* <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"> 
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          {/* <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Teachers List
             </h2>
             <ul className="space-y-2">
               {teachers.map((teacher) => (
                 <li
                   key={teacher._id}
-                  className="p-3 border-b border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white"
+                  className="p-3 border-b border-gray-200 text-gray-700"
                 >
                   {teacher.name}
                 </li>

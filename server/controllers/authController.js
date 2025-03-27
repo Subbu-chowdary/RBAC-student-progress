@@ -42,13 +42,16 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body; // Changed from email to identifier
 
-    // Convert email to lowercase for consistency
-    const lowerCaseEmail = email.toLowerCase();
+    // Convert identifier to lowercase for consistency
+    const lowerCaseIdentifier = identifier.toLowerCase();
 
-    // Find user by lowercase email
-    const user = await User.findOne({ email: lowerCaseEmail });
+    // Find user by either email or name (case-insensitive)
+    const user = await User.findOne({
+      $or: [{ email: lowerCaseIdentifier }, { name: lowerCaseIdentifier }],
+    });
+
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
