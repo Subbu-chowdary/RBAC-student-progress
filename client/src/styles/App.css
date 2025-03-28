@@ -1,4 +1,3 @@
-/* Import Tailwind's base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,7 +31,8 @@ body {
 .dark p,
 .dark label,
 .dark span,
-.dark li {
+.dark li,
+.dark text-gray-900 {
   color: #ffffff; /* White text in dark mode */
 }
 
@@ -55,15 +55,23 @@ body {
 .dark .bg-gray-600,
 .dark .bg-gray-700,
 .dark .bg-gray-800,
-.dark .bg-gray-900 {
+.dark .bg-gray-900,
+.dark .border-gray-300 {
   background-color: #000000; /* Black background in dark mode */
   color: #ffffff; /* White text in dark mode */
+  border: #2563eb 0.5px solid; /* Tailwind's blue-600 */
 }
-.dark .border-gray-200 {
+
+/* Preserve hover effects in dark mode for cards */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #1b437a; /* Tailwind's gray-800 for a subtle hover effect in dark mode */
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600 {
   color: #ffffff; /* White text in dark mode */
-}
-.hover .bg-gray-50 {
-  background-color: #374151; /* Tailwind's gray-700 */
 }
 
 /* Preserve specific colors for visibility in dark mode */
@@ -132,5 +140,3 @@ body {
   margin-left: 8px;
   font-size: 0.875rem; /* Tailwind's text-sm */
 }
-
-/* Additional custom styles can be added below */

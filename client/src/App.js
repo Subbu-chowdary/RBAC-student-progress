@@ -11,6 +11,9 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./components/Login";
 import AdminPage from "./pages/AdminPage";
+import Reports from "./components/admin/Reports";
+import StudentRecords from "./components/admin/StudentRecords"; // Import the new component
+import AdminLayout from "./components/AdminLayout";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -45,10 +48,32 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route
-            path="/admin/*" // Use wildcard to handle nested routes
+            path="/admin"
             element={
               <PrivateRoute allowedRole="admin">
-                <AdminPage />
+                <AdminLayout>
+                  <AdminPage />
+                </AdminLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <PrivateRoute allowedRole="admin">
+                <AdminLayout>
+                  <Reports />
+                </AdminLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/student-records"
+            element={
+              <PrivateRoute allowedRole="admin">
+                <AdminLayout>
+                  <StudentRecords />
+                </AdminLayout>
               </PrivateRoute>
             }
           />

@@ -339,7 +339,7 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
+//for uploading excel data
 const uploadExcelData = async (req, res) => {
   try {
     if (!req.file) {
@@ -351,7 +351,6 @@ const uploadExcelData = async (req, res) => {
     const workbook = XLSX.readFile(req.file.path);
     console.log("Sheet names:", workbook.SheetNames);
 
-    // Use the first sheet if "StudentMarks" is not found
     const sheetName = workbook.SheetNames.includes("StudentMarks")
       ? "StudentMarks"
       : workbook.SheetNames[0];
@@ -362,14 +361,12 @@ const uploadExcelData = async (req, res) => {
         .json({ message: "No sheets found in the Excel file" });
     }
 
-    // Parse the sheet with header: 1 to use the first row as headers
     const sheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
-      header: 1, // Use the first row as headers
+      header: 1,
       defval: null,
-      raw: false, // Convert dates to strings
+      raw: false,
     });
 
-    // The first row should be the headers
     if (sheet.length === 0) {
       console.log(`No data found in sheet: ${sheetName}`);
       return res
@@ -377,11 +374,9 @@ const uploadExcelData = async (req, res) => {
         .json({ message: `No valid data found in sheet: ${sheetName}` });
     }
 
-    // Extract headers from the first row
     const headers = sheet[0];
     console.log("Headers:", headers);
 
-    // Convert remaining rows to objects using the headers
     const data = sheet.slice(1).map((row) => {
       const rowData = {};
       headers.forEach((header, index) => {
@@ -401,6 +396,7 @@ const uploadExcelData = async (req, res) => {
 
     let processedRows = 0;
     let failedRows = 0;
+    let skippedDuplicates = 0;
 
     for (const row of data) {
       const {
@@ -417,7 +413,6 @@ const uploadExcelData = async (req, res) => {
       } = row;
       console.log("Processing row:", { studentId, name, email, subjectName });
 
-      // Validate required fields for student creation
       if (!studentId || !name || !email || !password || !departmentName) {
         console.log(
           `Skipping row due to missing required fields: ${JSON.stringify(row)}`
@@ -426,10 +421,8 @@ const uploadExcelData = async (req, res) => {
         continue;
       }
 
-      // Handle student creation or lookup
       let student = await Student.findOne({ studentId });
       if (!student) {
-        // Find or create department
         let department = await Department.findOne({ name: departmentName });
         if (!department) {
           department = new Department({ name: departmentName, subjects: [] });
@@ -449,7 +442,6 @@ const uploadExcelData = async (req, res) => {
           );
         }
 
-        // Create user
         let user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
           try {
@@ -471,13 +463,12 @@ const uploadExcelData = async (req, res) => {
           console.log("Found existing user:", user.email, "ID:", user._id);
         }
 
-        // Find or create subjects
         const subjectNames = enrolledSubjects
-          ? enrolledSubjects.split(",").map((s) => s.trim())
+          ? [...new Set(enrolledSubjects.split(",").map((s) => s.trim()))]
           : [];
         const subjectIds = [];
         for (const subjName of subjectNames) {
-          if (!subjName) continue; // Skip empty subject names
+          if (!subjName) continue;
           let subject = await Subject.findOne({
             name: subjName,
             departmentId: department._id,
@@ -504,7 +495,6 @@ const uploadExcelData = async (req, res) => {
           subjectIds.push(subject._id);
         }
 
-        // Create student
         try {
           student = new Student({
             userId: user._id,
@@ -536,7 +526,6 @@ const uploadExcelData = async (req, res) => {
         );
       }
 
-      // Handle marks creation (if subjectName, testDate, etc., are present)
       if (
         subjectName &&
         testDate &&
@@ -565,7 +554,6 @@ const uploadExcelData = async (req, res) => {
           );
         }
 
-        // Parse testDate (handle various formats)
         let parsedTestDate;
         if (typeof testDate === "string") {
           parsedTestDate = new Date(testDate);
@@ -600,7 +588,6 @@ const uploadExcelData = async (req, res) => {
           continue;
         }
 
-        // Validate marks and totalMarks
         const marksNum = Number(marks);
         const totalMarksNum = Number(totalMarks);
         if (
@@ -613,6 +600,24 @@ const uploadExcelData = async (req, res) => {
             `Invalid marks or totalMarks for student ${studentId} in ${subjectName}: marks=${marks}, totalMarks=${totalMarks}`
           );
           failedRows++;
+          continue;
+        }
+
+        // Check if a mark already exists in the database for this student, subject, and date
+        const existingMark = await Marks.findOne({
+          studentId: student._id,
+          subjectId: subject._id,
+          testDate: {
+            $gte: new Date(parsedTestDate.setHours(0, 0, 0, 0)),
+            $lte: new Date(parsedTestDate.setHours(23, 59, 59, 999)),
+          },
+        });
+
+        if (existingMark) {
+          console.log(
+            `Skipping duplicate mark for student ${studentId} in ${subjectName} on ${parsedTestDate}`
+          );
+          skippedDuplicates++;
           continue;
         }
 
@@ -647,7 +652,7 @@ const uploadExcelData = async (req, res) => {
     console.log("Deleted uploaded file:", req.file.path);
 
     res.status(200).json({
-      message: `Data uploaded successfully. Processed ${processedRows} rows, failed ${failedRows} rows.`,
+      message: `Data uploaded successfully. Processed ${processedRows} rows, failed ${failedRows} rows, skipped ${skippedDuplicates} duplicates.`,
     });
   } catch (error) {
     console.error("Error processing Excel file:", error);

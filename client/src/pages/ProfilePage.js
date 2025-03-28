@@ -18,7 +18,7 @@ const ProfilePage = () => {
   return (
     <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <Sidebar role={user.role} />
-      <div className="flex-1 ml-64">
+      <div className="flex-1 ml-6">
         <Navbar />
         <div className="p-6 pt-20 max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
