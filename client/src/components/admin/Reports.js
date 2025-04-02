@@ -2,12 +2,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStudents } from "../../redux/slices/adminSlice";
-import Sidebar from "../Sidebar";
 
 const Reports = () => {
   const dispatch = useDispatch();
   const { students, loading, error } = useSelector((state) => state.admin);
-  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchStudents());
@@ -103,74 +101,69 @@ const Reports = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100 transition-colors duration-300">
-      <Sidebar role={user ? user.role : null} />
-      <div className="flex-1 ml-64 p-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Student Marks Reports
-          </h2>
-          {reports.length === 0 ? (
-            <p className="text-gray-700">No reports available.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="py-2 px-4 border-b text-left text-gray-700">
-                      Name
-                    </th>
-                    <th className="py-2 px-4 border-b text-left text-gray-700">
-                      Category
-                    </th>
-                    {dates.map((date) => (
-                      <th
+    <div className="max-w-6xl mx-auto">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        Student Marks Reports
+      </h2>
+      {reports.length === 0 ? (
+        <p className="text-gray-700">No reports available.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="py-2 px-4 border-b text-left text-gray-700">
+                  Name
+                </th>
+                <th className="py-2 px-4 border-b text-left text-gray-700">
+                  Category
+                </th>
+                {dates.map((date) => (
+                  <th
+                    key={date}
+                    className="py-2 px-4 border-b text-left text-gray-700"
+                  >
+                    {formatDate(date)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((report, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="py-2 px-4 border-b text-gray-700">
+                    {report.studentName}
+                  </td>
+                  <td className="py-2 px-4 border-b text-gray-700">
+                    {report.subject}
+                  </td>
+                  {dates.map((date) => {
+                    const markData = report.marksByDate[date];
+                    return (
+                      <td
                         key={date}
-                        className="py-2 px-4 border-b text-left text-gray-700"
+                        className="py-2 px-4 border-b text-gray-700"
                       >
-                        {formatDate(date)}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {reports.map((report, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="py-2 px-4 border-b text-gray-700">
-                        {report.studentName}
+                        {markData ? (
+                          <>
+                            {markData.marks}{" "}
+                            <span className="text-blue-500">▼</span>{" "}
+                            <span className="text-gray-500">
+                              {markData.percentage}
+                            </span>
+                          </>
+                        ) : (
+                          "-"
+                        )}
                       </td>
-                      <td className="py-2 px-4 border-b text-gray-700">
-                        {report.subject}
-                      </td>
-                      {dates.map((date) => {
-                        const markData = report.marksByDate[date];
-                        return (
-                          <td
-                            key={date}
-                            className="py-2 px-4 border-b text-gray-700"
-                          >
-                            {markData ? (
-                              <>
-                                {markData.marks}{" "}
-                                <span className="text-blue-500">▼</span>{" "}
-                                <span className="text-gray-500">
-                                  {markData.percentage}
-                                </span>
-                              </>
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
+      )}
     </div>
   );
 };

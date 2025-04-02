@@ -28,7 +28,7 @@ const UploadDataModal = ({ isOpen, onClose }) => {
     formData.append("excelFile", file);
 
     try {
-      const response = await api.post("/admin/upload-excel", formData, {
+      const response = await api.post("/upload/excel", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("Upload response:", response.data);
@@ -69,6 +69,11 @@ const UploadDataModal = ({ isOpen, onClose }) => {
             onChange={handleFileChange}
             className="w-full p-2 border-2 border-gray-300 rounded-lg"
           />
+          {file && (
+            <p className="text-gray-600">
+              Selected file: <span className="font-semibold">{file.name}</span>
+            </p>
+          )}
           <button
             onClick={handleUpload}
             className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"

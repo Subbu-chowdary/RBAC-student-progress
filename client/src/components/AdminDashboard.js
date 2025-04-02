@@ -235,7 +235,7 @@ const AdminDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar role="admin" />
-      <div className="flex-1 p-6 ml-64">
+      <div className="flex-1 p-6 ">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">
             Admin Dashboard
@@ -252,12 +252,12 @@ const AdminDashboard = () => {
           {/* Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div
-              className="bg-white p-6 rounded-lg shadow-md cursor-pointer dark:hover:bg-gray-50"
+              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addStudent: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 ">
                 Add Student
               </h2>
               <p className="text-gray-600">Click to add a new student</p>

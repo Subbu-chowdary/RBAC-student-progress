@@ -32,10 +32,10 @@ const Home = () => {
       <Sidebar role={user ? user.role : null} />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 p-6">
+      <div className="flex-1  mt-12 p-6">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            Welcome to College Portal
+            Welcome to OJT Portal
           </h1>
 
           {/* User Greeting or Login Prompt */}
