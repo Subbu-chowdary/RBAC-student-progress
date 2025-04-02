@@ -13,7 +13,6 @@ import {
   assignTeacherToSubject,
   addMarks,
 } from "../redux/slices/adminSlice";
-import Sidebar from "../components/Sidebar";
 
 const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
@@ -234,9 +233,8 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar role="admin" />
       <div className="flex-1 p-6 ">
-        <div className="max-w-6xl mx-auto">
+        <div className=" mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">
             Admin Dashboard
           </h1>

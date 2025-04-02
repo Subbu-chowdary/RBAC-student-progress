@@ -1,3 +1,4 @@
+// college-portal/client/src/components/Navbar.js
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -17,9 +18,19 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className=" mx-auto px-4 sm:px-6 lg:px-2">
         <div className="flex justify-between items-center h-16">
-          <div></div>
+          {/* Left side: Logo */}
+          <div className="flex items-center">
+            <Link
+              to="/"
+              className="text-xl font-bold text-gray-900 dark:text-white"
+            >
+              研修監視 監視
+            </Link>
+          </div>
+
+          {/* Right side: Dark Mode Toggle and Profile Icon */}
           <div className="flex items-center space-x-4">
             {/* Dark Mode Toggle */}
             <label className="toggle-container flex items-center cursor-pointer">
