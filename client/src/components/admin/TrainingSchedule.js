@@ -8,6 +8,11 @@ import {
 import { Chart } from "react-google-charts";
 import api from "../../services/api";
 
+// Utility function to convert days to milliseconds, as in the reference
+function daysToMilliseconds(days) {
+  return days * 24 * 60 * 60 * 1000;
+}
+
 const TrainingSchedule = () => {
   const dispatch = useDispatch();
   const { trainingSchedules, subjects, loading, error, departments } =
@@ -113,7 +118,7 @@ const TrainingSchedule = () => {
     return acc;
   }, {});
 
-  // Prepare data for the Gantt chart (one bar per subject)
+  // Prepare data for the Gantt chart (one bar per subject, matching reference structure)
   const chartData = [
     [
       { type: "string", label: "Task ID" },
@@ -124,15 +129,21 @@ const TrainingSchedule = () => {
       { type: "number", label: "Percent Complete" },
       { type: "string", label: "Dependencies" },
     ],
-    ...Object.entries(groupedSchedules).map(([subjectName, data], index) => [
-      `${subjectName}-${index}`, // Unique ID per subject
-      `${subjectName} (${Array.from(data.departments).join(", ")})`,
-      data.startDate,
-      data.endDate,
-      null, // Let Gantt chart calculate duration
-      100,
-      null,
-    ]),
+    ...Object.entries(groupedSchedules).map(([subjectName, data], index) => {
+      const departmentsArray = Array.from(data.departments);
+      const durationInDays = Math.ceil(
+        (data.endDate - data.startDate) / (24 * 60 * 60 * 1000)
+      ); // Calculate duration in days
+      return [
+        `${subjectName}-${index}`, // Unique ID per subject
+        `${subjectName} (${departmentsArray.join(", ")})`,
+        data.startDate,
+        data.endDate,
+        daysToMilliseconds(durationInDays), // Convert duration to milliseconds
+        100,
+        null,
+      ];
+    }),
   ];
 
   // Log chartData for debugging
@@ -150,44 +161,15 @@ const TrainingSchedule = () => {
     })
   );
 
-  // Define base palette with a robust set of colors, mapped by subject
-  const subjectColors = {};
-  const basePalette = [
-    "#4CAF50", // Green
-    "#2196F3", // Blue
-    "#FF9800", // Orange
-    "#F44336", // Red
-    "#FFEB3B", // Yellow
-    "#9C27B0", // Purple
-    "#03A9F4", // Light Blue
-    "#8BC34A", // Light Green
-    "#FF5722", // Deep Orange
-    "#E91E63", // Pink
-    "#607D8B", // Blue Gray
-    "#9E9E9E", // Gray
-  ];
-  subjects.forEach((subject, index) => {
-    subjectColors[subject.name] =
-      basePalette[index % basePalette.length] || "#CCCCCC";
-  });
-
-  // Generate palette based on subject colors
-  const palette = chartData.slice(1).map((row) => {
-    const subjectName = row[1].split(" (")[0]; // Extract subject name from task name
-    return { color: subjectColors[subjectName] || "#CCCCCC" };
-  });
-
-  // Log palette for debugging
-  useEffect(() => {
-    console.log("Generated Palette:", palette);
-  }, [palette]);
-
   const options = {
     height: Math.max(100, (chartData.length - 1) * 40 + 50),
     gantt: {
       trackHeight: 30,
-      palette: palette,
-      defaultColor: "#CCCCCC",
+      defaultStyle: {
+        fill: "#4CAF50", // Single color for all bars (green, as an example)
+        stroke: "#388E3C", // Slightly darker border for contrast
+        label: { color: "#333333" },
+      },
       barCornerRadius: 3,
       labelStyle: {
         fontName: "Arial",
@@ -251,7 +233,7 @@ const TrainingSchedule = () => {
       </div>
 
       {/* Form to Add New Training Schedule */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2 text-gray-700">
           Add New Training Schedule
         </h2>
@@ -330,7 +312,7 @@ const TrainingSchedule = () => {
             Add Schedule
           </button>
         </form>
-      </div>
+      </div> */}
 
       {/* Gantt Chart */}
       <div className="overflow-x-auto mb-6 bg-white p-4 rounded shadow">
