@@ -159,6 +159,22 @@ export const addMarks = createAsyncThunk(
     }
   }
 );
+// Add fetchTrainingSchedules thunk
+export const fetchTrainingSchedules = createAsyncThunk(
+  "admin/fetchTrainingSchedules",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/admin/training-schedules");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Failed to fetch training schedules",
+        }
+      );
+    }
+  }
+);
 
 const adminSlice = createSlice({
   name: "admin",
@@ -168,6 +184,7 @@ const adminSlice = createSlice({
     subjects: [],
     users: [],
     departments: [],
+    trainingSchedules: [], // Add trainingSchedules to the state
     loading: false,
     error: null,
   },
@@ -387,6 +404,24 @@ const adminSlice = createSlice({
       .addCase(addMarks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to add marks";
+      });
+
+    // Fetch Training Schedules
+    builder
+      .addCase(fetchTrainingSchedules.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTrainingSchedules.fulfilled, (state, action) => {
+        state.loading = false;
+        state.trainingSchedules = Array.isArray(action.payload)
+          ? action.payload
+          : [];
+      })
+      .addCase(fetchTrainingSchedules.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message || "Failed to fetch training schedules";
       });
   },
 });

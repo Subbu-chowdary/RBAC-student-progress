@@ -14,6 +14,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
+  FaCalendarAlt, // Ensure this is correctly imported
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -40,7 +41,16 @@ const Sidebar = () => {
   const adminLinks = [
     { path: "/admin", label: "Admin Dashboard", icon: <FaTachometerAlt /> },
     { path: "/reports", label: "Reports", icon: <FaChartBar /> },
-    { path: "/student-records", label: "Student Records", icon: <FaBook /> },
+    {
+      path: "/training-schedule", // Add the new route for Training Schedule
+      label: "Training Schedule",
+      icon: <FaCalendarAlt />,
+    },
+    {
+      path: "/student-records",
+      label: "Student Records",
+      icon: <FaBook />,
+    },
     {
       label: "Upload Data (Modal)",
       action: () => setIsUploadModalOpen(true),

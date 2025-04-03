@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom"; // Import routing components
 import AdminDashboard from "../components/AdminDashboard";
 import Reports from "../components/admin/Reports"; // Import Reports component
 import UploadDataModal from "../components/admin/UploadDataModal"; // Import UploadDataModal for consistency
-
+import TrainingSchedule from "../components/admin/TrainingSchedule"; // Import TrainingSchedule component
 const AdminPage = () => {
   return (
     <div>
@@ -13,6 +13,8 @@ const AdminPage = () => {
         {/* Default route for /admin */}
         <Route path="reports" element={<Reports />} />{" "}
         {/* New route for /admin/reports */}
+        <Route path="training-schedule" element={<TrainingSchedule />} />{" "}
+        {/* New route for /admin/training-schedule */}
         <Route
           path="uploads"
           element={<UploadDataModal isOpen={true} onClose={() => {}} />}

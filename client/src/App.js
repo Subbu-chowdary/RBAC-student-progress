@@ -12,8 +12,9 @@ import Home from "./pages/Home";
 import Login from "./components/Login";
 import AdminPage from "./pages/AdminPage";
 import Reports from "./components/admin/Reports";
+import TrainingSchedule from "./components/admin/TrainingSchedule"; // Import the new component
 import StudentRecords from "./components/admin/StudentRecords"; // Import the new component
-import StudentDetails from "./components/students/StudentDetails"; 
+import StudentDetails from "./components/students/StudentDetails";
 import AdminLayout from "./components/AdminLayout";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
@@ -87,7 +88,17 @@ function App() {
                 </AdminLayout>
               </PrivateRoute>
             }
-          />          
+          />
+          <Route
+            path="/training-schedule"
+            element={
+              <PrivateRoute allowedRole="admin">
+                <AdminLayout>
+                  <TrainingSchedule />
+                </AdminLayout>
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/teacher"
             element={
