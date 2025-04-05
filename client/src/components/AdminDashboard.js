@@ -233,7 +233,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="flex-1 p-6 ">
+      <div className="flex-1 p-6 bg-gray-50 dark:bg-gray-900">
         <div className=" mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">
             Admin Dashboard

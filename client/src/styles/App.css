@@ -140,3 +140,30 @@ body {
   margin-left: 8px;
   font-size: 0.875rem; /* Tailwind's text-sm */
 }
+
+/* styles/globals.css */
+.rct-timeline {
+  border: 1px solid #e5e7eb;
+  user-select: none;
+  overflow-x: hidden;
+  pointer-events: none;
+  background-color: #ffffff;
+}
+.rct-timeline.dark {
+  background-color: #1a202c;
+  border-color: #4a5568;
+}
+.rct-header {
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+  padding: 8px;
+  min-height: 40px;
+}
+.rct-header.dark {
+  background-color: #2d3748;
+  border-bottom-color: #4a5568;
+  color: #e2e8f0;
+}
+/* Add similar .dark variants for other classes */

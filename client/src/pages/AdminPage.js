@@ -15,10 +15,7 @@ const AdminPage = () => {
         {/* New route for /admin/reports */}
         <Route path="training-schedule" element={<TrainingSchedule />} />{" "}
         {/* New route for /admin/training-schedule */}
-        <Route
-          path="uploads"
-          element={<UploadDataModal isOpen={true} onClose={() => {}} />}
-        />{" "}
+        <Route path="uploads" element={<UploadDataModal />} />{" "}
         {/* Existing route for /admin/uploads */}
         <Route path="*" element={<AdminDashboard />} />{" "}
         {/* Fallback to AdminDashboard */}

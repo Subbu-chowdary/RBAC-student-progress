@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import StudentsList from "../components/students/StudentsList";
+import StudentList from "../components/students/StudentList";
 import TeachersList from "../components/teachers/TeachersList";
 import {
   fetchStudents,
@@ -54,7 +55,7 @@ const Home = () => {
             {/* Admin-Only Section */}
             {user.role === "admin" && (
               <div>
-                <StudentsList />
+                <StudentList />
                 <TeachersList />
               </div>
             )}

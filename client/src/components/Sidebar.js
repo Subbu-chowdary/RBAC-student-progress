@@ -1,9 +1,7 @@
-// college-portal/client/src/components/Sidebar.js
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
-import UploadDataModal from "./admin/UploadDataModal";
 import {
   FaHome,
   FaUser,
@@ -26,7 +24,6 @@ const Sidebar = () => {
   const [isMinimized, setIsMinimized] = useState(() => {
     return localStorage.getItem("sidebarMinimized") === "true";
   });
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("sidebarMinimized", isMinimized);
@@ -52,8 +49,8 @@ const Sidebar = () => {
       icon: <FaBook />,
     },
     {
-      label: "Upload Data (Modal)",
-      action: () => setIsUploadModalOpen(true),
+      path: "/uploads",
+      label: "Upload Data",
       icon: <FaUpload />,
     },
   ];
@@ -113,43 +110,26 @@ const Sidebar = () => {
         <ul className="space-y-2">
           {allLinks.map((link, index) => (
             <li key={link.path || index} className="relative group">
-              {link.path ? (
-                <NavLink
-                  to={link.path}
-                  className={({ isActive }) =>
-                    `flex items-center p-2 rounded-lg transition-colors duration-200 ${
-                      isActive
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-300 hover:bg-gray-700"
-                    }`
-                  }
-                >
-                  <span className="text-xl">{link.icon}</span>
-                  {!isMinimized && (
-                    <span className="ml-3 truncate">{link.label}</span>
-                  )}
-                  {isMinimized && (
-                    <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-700 text-white text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                      {link.label}
-                    </span>
-                  )}
-                </NavLink>
-              ) : (
-                <button
-                  onClick={link.action}
-                  className="flex items-center w-full text-left p-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors duration-200"
-                >
-                  <span className="text-xl">{link.icon}</span>
-                  {!isMinimized && (
-                    <span className="ml-3 truncate">{link.label}</span>
-                  )}
-                  {isMinimized && (
-                    <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-700 text-white text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                      {link.label}
-                    </span>
-                  )}
-                </button>
-              )}
+              <NavLink
+                to={link.path}
+                className={({ isActive }) =>
+                  `flex items-center p-2 rounded-lg transition-colors duration-200 ${
+                    isActive
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-300 hover:bg-gray-700"
+                  }`
+                }
+              >
+                <span className="text-xl">{link.icon}</span>
+                {!isMinimized && (
+                  <span className="ml-3 truncate">{link.label}</span>
+                )}
+                {isMinimized && (
+                  <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-700 text-white text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    {link.label}
+                  </span>
+                )}
+              </NavLink>
             </li>
           ))}
           <li className="relative group">
@@ -183,10 +163,6 @@ const Sidebar = () => {
           Powered by Scient Labs LLC
         </p>
       )}
-      <UploadDataModal
-        isOpen={isUploadModalOpen}
-        onClose={() => setIsUploadModalOpen(false)}
-      />
     </div>
   );
 };

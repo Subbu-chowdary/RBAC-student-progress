@@ -1,14 +1,11 @@
-// college-portal/client/src/components/UploadDataModal.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import api from "../../services/api";
 
-const UploadDataModal = ({ isOpen, onClose }) => {
+const UploadPage = () => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const navigate = useNavigate(); // For navigation after upload
-
-  if (!isOpen) return null;
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -35,9 +32,8 @@ const UploadDataModal = ({ isOpen, onClose }) => {
       setMessage(response.data.message);
       setFile(null); // Reset file input
 
-      // Close the modal and navigate back to admin dashboard
+      // Redirect to admin dashboard after a delay to show the success message
       setTimeout(() => {
-        onClose(); // Close the modal
         navigate("/admin"); // Redirect to admin dashboard
       }, 2000); // Delay to show the success message
     } catch (error) {
@@ -50,49 +46,52 @@ const UploadDataModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">Upload Data</h2>
-          <button onClick={onClose} className="text-gray-600">
-            ✕
-          </button>
-        </div>
-        <div className="space-y-4">
-          <p className="text-gray-600">
-            Upload an Excel file containing student and marks data. Ensure it
-            follows the predefined template.
-          </p>
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleFileChange}
-            className="w-full p-2 border-2 border-gray-300 rounded-lg"
-          />
-          {file && (
-            <p className="text-gray-600">
-              Selected file: <span className="font-semibold">{file.name}</span>
+    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2 dark:text-white">
+          Upload Data
+        </h1>
+
+        <div className="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800">
+          <div className="space-y-6">
+            <p className="text-gray-600 dark:text-gray-300">
+              Upload an Excel file containing student and marks data. Ensure it
+              follows the predefined template.
             </p>
-          )}
-          <button
-            onClick={handleUpload}
-            className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Upload
-          </button>
-          {message && (
-            <p
-              className={`mt-4 ${
-                message.includes("Error") ? "text-red-500" : "text-green-500"
-              }`}
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleFileChange}
+              className="w-full p-2 border-2 border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            />
+            {file && (
+              <p className="text-gray-600 dark:text-gray-300">
+                Selected file:{" "}
+                <span className="font-semibold">{file.name}</span>
+              </p>
+            )}
+            <button
+              onClick={handleUpload}
+              className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors dark:bg-blue-600 dark:hover:bg-blue-700"
             >
-              {message}
-            </p>
-          )}
+              Upload
+            </button>
+            {message && (
+              <p
+                className={`mt-4 ${
+                  message.includes("Error")
+                    ? "text-red-500 dark:text-red-400"
+                    : "text-green-500 dark:text-green-400"
+                }`}
+              >
+                {message}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default UploadDataModal;
+export default UploadPage;

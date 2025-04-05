@@ -47,4 +47,22 @@ router.get("/training-schedules", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch training schedules" });
   }
 });
+router.put("/training-schedules/:id", async (req, res) => {
+  try {
+    const { _id, subjectId, classDates, departmentId } = req.body;
+    const schedule = await TrainingSchedule.findByIdAndUpdate(
+      req.params.id,
+      { subjectId, classDates, departmentId },
+      { new: true }
+    );
+    if (!schedule) {
+      return res.status(404).json({ message: "Schedule not found" });
+    }
+    res.json(schedule);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to update schedule", error: error.message });
+  }
+});
 module.exports = router;

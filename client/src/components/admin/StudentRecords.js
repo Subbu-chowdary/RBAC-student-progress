@@ -197,23 +197,33 @@ const StudentRecords = () => {
   const tableData = getTableData();
 
   if (loading) {
-    return <div className="p-6 text-center text-gray-700">Loading...</div>;
+    return (
+      <div className="p-6 text-center text-gray-700 dark:text-white">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-6 text-center text-red-500">{error}</div>;
+    return (
+      <div className="p-6 text-center text-red-500 dark:text-white">
+        {error}
+      </div>
+    );
   }
 
   return (
     <div className="max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 dark:text-white">
         Student Records Visualization
       </h2>
 
       {/* Selectors */}
       <div className="mb-6 space-y-4">
         <div>
-          <label className="block text-gray-700 mb-2">Select Student</label>
+          <label className="block text-gray-700 mb-2 dark:text-white">
+            Select Student
+          </label>
           <Select
             options={studentOptions}
             value={selectedStudent}
@@ -232,7 +242,7 @@ const StudentRecords = () => {
           <>
             {subjectOptions.length > 0 && (
               <div>
-                <label className="block text-gray-700 mb-2">
+                <label className="block text-gray-700 mb-2 dark:text-white">
                   Select Subject (Optional)
                 </label>
                 <Select
@@ -249,7 +259,9 @@ const StudentRecords = () => {
             {/* Date Range Pickers */}
             <div className="flex space-x-4">
               <div>
-                <label className="block text-gray-700 mb-2">From Date</label>
+                <label className="block text-gray-700 mb-2 dark:text-white">
+                  From Date
+                </label>
                 <DatePicker
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
@@ -262,7 +274,9 @@ const StudentRecords = () => {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2">To Date</label>
+                <label className="block text-gray-700 mb-2 dark:text-white">
+                  To Date
+                </label>
                 <DatePicker
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}

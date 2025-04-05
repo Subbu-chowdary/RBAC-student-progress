@@ -14,6 +14,7 @@ import AdminPage from "./pages/AdminPage";
 import Reports from "./components/admin/Reports";
 import TrainingSchedule from "./components/admin/TrainingSchedule"; // Import the new component
 import StudentRecords from "./components/admin/StudentRecords"; // Import the new component
+import UploadDataModal from "./components/admin/UploadDataModal"; // Import the new component
 import StudentDetails from "./components/students/StudentDetails";
 import AdminLayout from "./components/AdminLayout";
 import TeacherPage from "./pages/TeacherPage";
@@ -100,7 +101,17 @@ function App() {
             }
           />
           <Route
-            path="/teacher"
+            path="/uploads"
+            element={
+              <PrivateRoute allowedRole="admin">
+                <AdminLayout>
+                  <UploadDataModal />
+                </AdminLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/upload"
             element={
               <PrivateRoute allowedRole="teacher">
                 <TeacherPage />
