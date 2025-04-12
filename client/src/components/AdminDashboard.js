@@ -233,9 +233,11 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="flex-1 p-6 bg-gray-50 dark:bg-gray-900">
+      {/* <div className="flex-1 p-6 bg-gray-50 dark:bg-gray-900"> */}
+      <div className="flex-1 p-6">
         <div className=" mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          {/* <h1 className="text-3xl font-bold text-gray-900 mb-6"> */}
+          <h1 className="text-3xl font-bold mb-6">
             Admin Dashboard
           </h1>
           {loading && <p className="text-blue-500 mb-4">Loading...</p>}
@@ -271,6 +273,8 @@ const AdminDashboard = () => {
               </h2>
               <p className="text-gray-600">Click to add a new teacher</p>
             </div>
+
+{/* 
             <div
               className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
               onClick={() =>
@@ -282,6 +286,8 @@ const AdminDashboard = () => {
               </h2>
               <p className="text-gray-600">Click to add a new department</p>
             </div>
+
+             */}
             <div
               className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
               onClick={() =>

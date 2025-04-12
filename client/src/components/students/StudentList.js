@@ -1,8 +1,8 @@
-import React from "react";
+import React,{useState, useEffect} from "react";
 import { useSelector } from "react-redux";
 import DataTable from "react-data-table-component";
 import { useNavigate } from 'react-router-dom';
-import { customStyles } from "../util/Constants";
+import { getCustomStyles } from "../util/Constants";
 
 const StudentList = () => {
     const navigate = useNavigate();
@@ -23,6 +23,24 @@ const StudentList = () => {
         navigate(`/student/${row._id}`);
     }
 
+    const [isDarkMode, setIsDarkMode] = useState(false); 
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+          setIsDarkMode(document.documentElement.classList.contains("dark"));
+        });
+      
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+      
+        // Initial check
+        setIsDarkMode(document.documentElement.classList.contains("dark"));
+      
+        return () => observer.disconnect();
+      }, []);
+
     return (<div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
         <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
             Student List
@@ -36,7 +54,8 @@ const StudentList = () => {
       <DataTable
         columns={columns}
         data={students}
-        customStyles={customStyles}
+        // customStyles={customStyles}
+        customStyles={getCustomStyles(isDarkMode)}
         pagination
         fixedHeader
         striped
