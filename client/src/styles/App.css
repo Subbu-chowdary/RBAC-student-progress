@@ -32,7 +32,7 @@ body {
 .dark label,
 .dark span,
 .dark li,
-.dark text-gray-900 {
+.dark .text-gray-900 {
   color: #ffffff; /* White text in dark mode */
 }
 
@@ -105,10 +105,10 @@ body {
 /* Slider background */
 .toggle-slider {
   position: relative;
-  width: 40px; /* Match Navbar.js toggle width */
-  height: 20px; /* Match Navbar.js toggle height */
+  width: 40px;
+  height: 20px;
   background-color: #d1d5db; /* Tailwind's gray-300 in light mode */
-  border-radius: 9999px; /* Full rounding */
+  border-radius: 9999px;
   transition: background-color 0.3s ease-in-out;
 }
 
@@ -118,9 +118,9 @@ body {
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 16px; /* Slightly smaller than height for padding */
+  width: 16px;
   height: 16px;
-  background-color: #ffffff; /* White knob */
+  background-color: #ffffff;
   border-radius: 50%;
   transition: transform 0.3s ease-in-out;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -132,7 +132,7 @@ body {
 }
 
 .toggle-container input:checked + .toggle-slider::before {
-  transform: translateX(20px); /* Move knob to the right */
+  transform: translateX(20px);
 }
 
 /* Ensure toggle text remains visible */
@@ -141,34 +141,214 @@ body {
   font-size: 0.875rem; /* Tailwind's text-sm */
 }
 
-/* styles/globals.css */
+/* React Calendar Timeline Styles */
 .rct-timeline {
-  border: 1px solid #e5e7eb;
-  user-select: none;
-  overflow-x: hidden;
-  pointer-events: none;
-  background-color: #ffffff;
+  border: 1px solid #e5e7eb !important;
+  user-select: none !important;
+  overflow-x: hidden !important;
+  pointer-events: none !important;
+  background-color: #ffffff !important;
 }
-.rct-timeline.dark {
-  background-color: #1a202c;
-  border-color: #4a5568;
-}
-.rct-header {
-  background-color: #f9fafb;
-  border-bottom: 2px solid #e5e7eb;
-  font-weight: 600;
-  color: #374151;
-  padding: 8px;
-  min-height: 40px;
-}
-.rct-header.dark {
-  background-color: #2d3748;
-  border-bottom-color: #4a5568;
-  color: #e2e8f0;
-}
-/* Add similar .dark variants for other classes */
 
+.dark .rct-timeline {
+  background-color: #1a202c !important;
+  border-color: #4a5568 !important;
+}
+
+.rct-header {
+  background-color: #f9fafb !important;
+  border-bottom: 2px solid #e5e7eb !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  padding: 8px !important;
+  min-height: 40px !important;
+}
+
+.dark .rct-header {
+  background-color: #2d3748 !important;
+  border-bottom-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+.rct-dateHeader {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  font-size: 12px !important;
+  color: #6b7280 !important;
+  padding: 4px !important;
+  min-height: 30px !important;
+}
+
+.dark .rct-dateHeader {
+  background-color: #1a202c !important;
+  border-bottom-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+.rct-sidebar {
+  background-color: #f3f4f6 !important;
+  border-right: 2px solid #e5e7eb !important;
+  font-size: 14px !important;
+  padding: 8px !important;
+}
+
+.dark .rct-sidebar {
+  background-color: #2d3748 !important;
+  border-right-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+.rct-vertical-lines {
+  border-left: 1px solid #e5e7eb !important;
+}
+
+.dark .rct-vertical-lines {
+  border-left-color: #4a5568 !important;
+}
+
+.rct-horizontal-lines {
+  border-top: 1px solid #e5e7eb !important;
+}
+
+.dark .rct-horizontal-lines {
+  border-top-color: #4a5568 !important;
+}
+
+.rct-item {
+  background-color: #4f46e5 !important;
+  color: white !important;
+  border: 1px solid #4338ca !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  margin: 4px 0 !important;
+  pointer-events: none !important;
+}
+
+.rct-item:hover {
+  background-color: #4338ca !important;
+}
+
+.rct-scroller {
+  overflow-x: hidden !important;
+  pointer-events: none !important;
+}
+
+.rct-canvas {
+  pointer-events: none !important;
+}
+
+button {
+  pointer-events: auto !important;
+}
+
+/* Ensure DataTable pagination buttons are visible in dark mode */
 .dark .rdt_Pagination button svg {
   fill: white !important;
-  }
- 
+}
+
+/* React-Select Styles */
+.react-select__control {
+  background-color: #f9fafb !important;
+  border-color: #d1d5db !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+.dark .react-select__control {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+.react-select__control--is-focused {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 1px #3b82f6 !important;
+}
+
+.dark .react-select__control--is-focused {
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 0 1px #60a5fa !important;
+}
+
+.react-select__value-container {
+  color: #1f2937 !important;
+}
+
+.dark .react-select__value-container {
+  color: #e2e8f0 !important;
+}
+
+.react-select__single-value {
+  color: #1f2937 !important;
+}
+
+.dark .react-select__single-value {
+  color: #e2e8f0 !important;
+}
+
+.react-select__placeholder {
+  color: #6b7280 !important;
+}
+
+.dark .react-select__placeholder {
+  color: #9ca3af !important;
+}
+
+.react-select__menu {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #1f2937 !important;
+}
+
+.dark .react-select__menu {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+.react-select__option {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+.dark .react-select__option {
+  background-color: #2d3748 !important;
+  color: #e2e8f0 !important;
+}
+
+.react-select__option--is-focused {
+  background-color: #e5e7eb !important;
+}
+
+.dark .react-select__option--is-focused {
+  background-color: #4a5568 !important;
+}
+
+.react-select__option--is-selected {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+.dark .react-select__option--is-selected {
+  background-color: #60a5fa !important;
+  color: #ffffff !important;
+}
+
+.react-select__input {
+  color: #1f2937 !important;
+}
+
+.dark .react-select__input {
+  color: #e2e8f0 !important;
+}
+
+.training-schedule-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: hidden;
+}

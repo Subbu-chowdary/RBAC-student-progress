@@ -46,7 +46,7 @@ const UploadPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
+    <div className="min-h-screen p-8 dark:bg-gray-900">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2 dark:text-white">
           Upload Data

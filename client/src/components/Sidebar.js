@@ -92,6 +92,7 @@ const Sidebar = () => {
       className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-gray-800 text-white p-4 z-20 transition-all duration-300 ${
         isMinimized ? "w-16" : "w-64"
       }`} // w-16 is 4rem (minimized), w-64 is 16rem (maximized)
+      style={{overflowY: "auto", overflowX: "hidden"}}
     >
       <div className="flex justify-between items-center mb-6">
         {!isMinimized && (
