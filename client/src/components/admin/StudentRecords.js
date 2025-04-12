@@ -221,7 +221,7 @@ const StudentRecords = () => {
       {/* Selectors */}
       <div className="mb-6 space-y-4">
         <div>
-          <label className="block text-gray-700 mb-2 dark:text-white">
+          <label className="block mb-2 dark:text-white">
             Select Student
           </label>
           <Select
@@ -234,7 +234,8 @@ const StudentRecords = () => {
               setEndDate(null);
             }}
             placeholder="Select a student..."
-            className="w-full max-w-md"
+            className="react-select w-full max-w-md"
+            classNamePrefix="react-select"
           />
         </div>
 
@@ -250,7 +251,8 @@ const StudentRecords = () => {
                   value={selectedSubject}
                   onChange={setSelectedSubject}
                   placeholder="Select a subject..."
-                  className="w-full max-w-md"
+                  className="react-select w-full max-w-md"
+                  classNamePrefix="react-select"
                   isClearable
                 />
               </div>
@@ -269,7 +271,7 @@ const StudentRecords = () => {
                   startDate={startDate}
                   endDate={endDate}
                   placeholderText="Select start date"
-                  className="w-full max-w-xs p-2 border border-gray-300 rounded"
+                  className="w-full max-w-xs p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                   dateFormat="dd-MMM-yyyy"
                 />
               </div>
@@ -285,7 +287,7 @@ const StudentRecords = () => {
                   endDate={endDate}
                   minDate={startDate}
                   placeholderText="Select end date"
-                  className="w-full max-w-xs p-2 border border-gray-300 rounded"
+                  className="w-full max-w-xs p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                   dateFormat="dd-MMM-yyyy"
                 />
               </div>
