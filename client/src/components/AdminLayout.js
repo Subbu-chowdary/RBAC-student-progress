@@ -32,7 +32,7 @@ const AdminLayout = ({ children }) => {
         className="flex-1 mt-16 transition-all duration-300 overflow-auto"
         style={{ marginLeft: sidebarWidth }}
       >
-        <main className="bg-gray-100 p-2">{children}</main>
+        <main className="bg-gray-900 p-2">{children}</main>
       </div>
     </div>
   );
