@@ -140,26 +140,28 @@ const Reports = () => {
                     {report.subject}
                   </td>
                   {dates.map((date) => {
-                    const markData = report.marksByDate[date];
-                    return (
-                      <td
-                        key={date}
-                        className="py-2 px-4 border-b text-gray-700"
-                      >
-                        {markData ? (
-                          <>
-                            {markData.marks}{" "}
-                            <span className="text-blue-500">▼</span>{" "}
-                            <span className="text-gray-500">
-                              {markData.percentage}
-                            </span>
-                          </>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-                    );
-                  })}
+  const markData = report.marksByDate[date];
+  return (
+    <td
+      key={date}
+      className="py-2 px-4 border-b text-gray-700"
+    >
+      {markData ? (
+        <>
+          {markData.marks}{" "}
+          {Number(markData.percentage.replace("%", "")) < 70 ? (
+            <span className="text-red-500">▼</span>
+          ) : (
+            <span className="text-blue-500">▲</span>
+          )}{" "}
+          <span className="text-gray-500">{markData.percentage}</span>
+        </>
+      ) : (
+        "-"
+      )}
+    </td>
+  );
+})}
                 </tr>
               ))}
             </tbody>
