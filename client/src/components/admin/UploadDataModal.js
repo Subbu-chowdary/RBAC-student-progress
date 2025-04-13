@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import api from "../../services/api";
 
+import {  useSelector } from "react-redux";
+
 const UploadPage = () => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const navigate = useNavigate(); // For navigation after upload
+
+  const { loading } = useSelector((state) => state.user);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -46,8 +50,11 @@ const UploadPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
       <div className="max-w-2xl mx-auto">
+      {loading && (
+            <p className="text-blue-500 dark:text-blue-400 mb-4"><Spinner/></p>
+          )}
         <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2 dark:text-white">
           Upload Data
         </h1>

@@ -17,6 +17,8 @@ import {
 } from "chart.js";
 import "react-datepicker/dist/react-datepicker.css";
 
+import Spinner from "../Spinner";
+
 // Register Chart.js components
 ChartJS.register(
   CategoryScale,
@@ -199,7 +201,8 @@ const StudentRecords = () => {
   if (loading) {
     return (
       <div className="p-6 text-center text-gray-700 dark:text-white">
-        Loading...
+        {/* Loading... */}
+        <Spinner />
       </div>
     );
   }

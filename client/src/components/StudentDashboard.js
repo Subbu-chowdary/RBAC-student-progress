@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMarks, fetchWeeklyReport } from "../redux/slices/studentSlice";
 import Sidebar from "../components/Sidebar";
 
+
+import Spinner from "../components/Spinner";
+
 const StudentDashboard = () => {
   const dispatch = useDispatch();
   const { marks, weeklyReport, loading, error } = useSelector(
@@ -165,10 +168,10 @@ const StudentDashboard = () => {
           <h1 className="text-3xl font-bold text-black mb-8">
             Student Dashboard
           </h1>
-
-          {loading && (
-            <p className="text-blue-500 mb-6 font-medium">Loading...</p>
-          )}
+{loading && <p className="text-blue-500 mb-4">
+            {/* Loading... */}
+            <Spinner />
+            </p>} 
           {error && (
             <p className="text-red-500 mb-6 font-medium">Error: {error}</p>
           )}

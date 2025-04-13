@@ -14,6 +14,10 @@ import {
   addMarks,
 } from "../redux/slices/adminSlice";
 
+
+import Spinner from "./Spinner";
+
+
 const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
@@ -240,7 +244,10 @@ const AdminDashboard = () => {
           <h1 className="text-3xl font-bold mb-6">
             Admin Dashboard
           </h1>
-          {loading && <p className="text-blue-500 mb-4">Loading...</p>}
+          {loading && <p className="text-blue-500 mb-4">
+            {/* Loading... */}
+            <Spinner />
+            </p>}
           {error && <p className="text-red-500 mb-4">Error: {error}</p>}
           {validationError && (
             <p className="text-red-500 mb-4">{validationError}</p>

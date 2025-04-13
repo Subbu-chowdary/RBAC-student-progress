@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUserProfile } from "../../redux/slices/alluserSlice";
 
+import Spinner from "../Spinner"; // Import the Spinner component
+
 const ProfileCard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth); // Authentication state
@@ -25,7 +27,7 @@ const ProfileCard = () => {
         Profile
       </h2>
       {loading && (
-        <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
+        <p className="text-blue-500 dark:text-blue-400 mb-4"><Spinner/></p>
       )}
       {error && (
         <p className="text-red-500 dark:text-red-400 mb-4">Error: {error}</p>

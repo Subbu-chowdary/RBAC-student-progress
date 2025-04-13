@@ -8,6 +8,8 @@ import {
 } from "../redux/slices/teacherSlice";
 import Sidebar from "../components/Sidebar";
 
+import Spinner from "./Spinner";
+
 const TeacherDashboard = () => {
   const dispatch = useDispatch();
   const { subjects, studentsForSubject, loading, error } = useSelector(
@@ -59,9 +61,10 @@ const TeacherDashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
             Teacher Dashboard
           </h1>
-          {loading && (
-            <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
-          )}
+          {loading && <p className="text-blue-500 mb-4">
+                      {/* Loading... */}
+                      <Spinner />
+                      </p>}
           {error && (
             <p className="text-red-500 dark:text-red-400 mb-4">
               Error: {error}

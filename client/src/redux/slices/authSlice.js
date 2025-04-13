@@ -48,8 +48,22 @@ export const checkAuth = createAsyncThunk(
       });
       const { role, name } = response.data;
       return { token, role, name };
-    } catch (error) {
-      localStorage.removeItem("token");
+    }
+    //  catch (error) {
+    //   localStorage.removeItem("token");
+    //   return rejectWithValue(
+    //     error.response?.data || { message: "Authentication failed" }
+    //   );
+    // }
+
+    catch (error) {
+      const status = error.response?.status;
+    
+      // Remove token only if auth failed (e.g., 401 Unauthorized)
+      if (status === 401) {
+        localStorage.removeItem("token");
+      }
+    
       return rejectWithValue(
         error.response?.data || { message: "Authentication failed" }
       );
@@ -65,6 +79,7 @@ const authSlice = createSlice({
     loading: false,
     error: null,
     isAuthenticated: false,
+    authChecked: false,
   },
   reducers: {
     logout: (state) => {
@@ -116,6 +131,7 @@ const authSlice = createSlice({
         state.user = { role: action.payload.role, name: action.payload.name };
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.authChecked = true; 
       })
       .addCase(checkAuth.rejected, (state, action) => {
         state.loading = false;
@@ -123,6 +139,7 @@ const authSlice = createSlice({
         state.token = null;
         state.isAuthenticated = false;
         state.error = action.payload.message;
+        state.authChecked = true; 
       });
   },
 });

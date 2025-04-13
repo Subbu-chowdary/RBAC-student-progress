@@ -2,6 +2,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
+import Spinner from "../Spinner"; // Import the Spinner component
+
 const OldStudentsList = () => {
   const { students, subjects, loading, error } = useSelector(
     (state) => state.admin
@@ -24,7 +26,7 @@ const OldStudentsList = () => {
         Students List
       </h2>
       {loading && (
-        <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
+        <p className="text-blue-500 dark:text-blue-400 mb-4"><Spinner/></p>
       )}
       {error && (
         <p className="text-red-500 dark:text-red-400 mb-4">Error: {error}</p>

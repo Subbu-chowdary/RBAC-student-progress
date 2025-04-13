@@ -12,9 +12,9 @@ import Home from "./pages/Home";
 import Login from "./components/Login";
 import AdminPage from "./pages/AdminPage";
 import Reports from "./components/admin/Reports";
-import TrainingSchedule from "./components/admin/TrainingSchedule"; // Import the new component
-import StudentRecords from "./components/admin/StudentRecords"; // Import the new component
-import UploadDataModal from "./components/admin/UploadDataModal"; // Import the new component
+import TrainingSchedule from "./components/admin/TrainingSchedule";
+import StudentRecords from "./components/admin/StudentRecords";
+import UploadDataModal from "./components/admin/UploadDataModal";
 import StudentDetails from "./components/students/StudentDetails";
 import AdminLayout from "./components/AdminLayout";
 import TeacherPage from "./pages/TeacherPage";
@@ -22,15 +22,23 @@ import StudentPage from "./pages/StudentPage";
 import ProfilePage from "./pages/ProfilePage";
 import "./styles/App.css";
 
-// PrivateRoute component for role-based access
-const PrivateRoute = ({ children, allowedRole }) => {
-  const { user } = useSelector((state) => state.auth);
+import Spinner from "./components/Spinner"; // Import the Spinner component
 
-  if (!allowedRole) {
-    return user ? children : <Navigate to="/login" />;
+const PrivateRoute = ({ children, allowedRole }) => {
+  const { user, isAuthenticated, authChecked } = useSelector(
+    (state) => state.auth
+  );
+
+  if (!authChecked) {
+    // return <div>Loading...</div>;
+    return <Spinner />; // Replace Loading... with Spinner
   }
 
-  return user && user.role === allowedRole ? (
+  if (!allowedRole) {
+    return isAuthenticated ? children : <Navigate to="/login" />;
+  }
+
+  return isAuthenticated && user && user.role === allowedRole ? (
     children
   ) : (
     <Navigate to="/login" />
@@ -38,7 +46,12 @@ const PrivateRoute = ({ children, allowedRole }) => {
 };
 
 function App() {
-  const { user } = useSelector((state) => state.auth);
+  const { isAuthenticated, authChecked } = useSelector((state) => state.auth);
+
+  if (!authChecked) {
+    // return <div>Loading...</div>;
+    return <Spinner />; // Replace Loading... with Spinner
+  }
 
   return (
     <Router>
@@ -47,7 +60,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={user ? <Home /> : <Navigate to="/login" />}
+            element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
           />
           <Route path="/login" element={<Login />} />
           <Route

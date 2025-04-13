@@ -4,6 +4,9 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from 'react-router-dom';
 import { getCustomStyles } from "../util/Constants";
 
+
+import Spinner from "../Spinner"; // Import the Spinner component
+
 const StudentList = () => {
     const navigate = useNavigate();
     const { students, loading, error } = useSelector(
@@ -46,7 +49,7 @@ const StudentList = () => {
             Student List
         </h2>
         {loading && (
-            <p className="text-blue-500 dark:text-blue-400 mb-4">Loading...</p>
+            <p className="text-blue-500 dark:text-blue-400 mb-4"><Spinner/></p>
         )}
         {error && (
             <p className="text-red-500 dark:text-red-400 mb-4">Error: {error}</p>

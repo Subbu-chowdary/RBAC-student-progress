@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStudents } from "../../redux/slices/adminSlice";
 
+import Spinner from "../Spinner";
+
 const Reports = () => {
   const dispatch = useDispatch();
   const { students, loading, error } = useSelector((state) => state.admin);
@@ -93,7 +95,7 @@ const Reports = () => {
   };
 
   if (loading) {
-    return <div className="p-6 text-center text-gray-700">Loading...</div>;
+    return <div className="p-6 text-center text-gray-700"><Spinner/></div>;
   }
 
   if (error) {

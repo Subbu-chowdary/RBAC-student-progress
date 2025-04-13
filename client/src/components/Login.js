@@ -3,17 +3,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
+import Spinner from "./Spinner"; // Import the Spinner component
+
+
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, authChecked } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
     const isDark = localStorage.getItem("darkMode") === "true";
     document.documentElement.classList.toggle("dark", isDark);
-  }, []);
+
+    if (authChecked && isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, authChecked, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,6 +31,11 @@ const Login = () => {
       navigate("/");
     }
   };
+
+  if (!authChecked) {
+    // return <div>Loading...</div>;
+    return <Spinner />; // Replace Loading... with Spinner
+  }
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6">

@@ -450,6 +450,9 @@ import "react-calendar-timeline/lib/Timeline.css";
 import moment from "moment";
 import { Chart } from "react-google-charts";
 
+
+import Spinner from "../../components/Spinner"; // Import your Spinner component
+
 // Color palette for subjects
 const subjectColors = [
   "#4f46e5", // Indigo
@@ -792,7 +795,8 @@ const TrainingSchedule = () => {
 
             {loading && (
               <p className="text-gray-500 text-center py-4 dark:text-gray-400">
-                Loading schedules...
+                {/* Loading schedules... */}
+                <Spinner/>
               </p>
             )}
             {error && (
@@ -848,7 +852,8 @@ const TrainingSchedule = () => {
             </h2>
             {loading && (
               <p className="text-gray-500 text-center py-4 dark:text-gray-400">
-                Loading Gantt chart...
+                {/* Loading Gantt chart... */}
+                <Spinner/>
               </p>
             )}
             {error && (
