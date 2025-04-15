@@ -434,10 +434,6 @@
 // // export default TrainingSchedule;
 // // //creared a brannch 1 and testing
 
-
-
-
-
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -445,33 +441,37 @@ import {
   fetchSubjects,
   fetchDepartments,
 } from "../../redux/slices/adminSlice";
-import Timeline from "react-calendar-timeline";
+import Timeline, {
+  TimelineMarkers,
+  TodayMarker,
+} from "react-calendar-timeline";
 import "react-calendar-timeline/lib/Timeline.css";
 import moment from "moment";
 import { Chart } from "react-google-charts";
-
-
-import Spinner from "../../components/Spinner"; // Import your Spinner component
+import Spinner from "../../components/Spinner";
 
 // Color palette for subjects
 const subjectColors = [
-  "#4f46e5", // Indigo
-  "#e11d48", // Rose
-  "#16a34a", // Green
-  "#d97706", // Amber
-  "#7c3aed", // Violet
-  "#db2777", // Pink
-  "#059669", // Emerald
-  "#b91c1c", // Red
-  "#0284c7", // Sky
-  "#ca8a04", // Yellow
+  "#4f46e5",
+  "#e11d48",
+  "#16a34a",
+  "#d97706",
+  "#7c3aed",
+  "#db2777",
+  "#059669",
+  "#b91c1c",
+  "#0284c7",
+  "#ca8a04",
 ];
 
 // Utility to darken colors for borders
 const darkenColor = (hex, amount) => {
   let color = hex.replace("#", "");
   if (color.length === 3) {
-    color = color.split("").map((c) => c + c).join("");
+    color = color
+      .split("")
+      .map((c) => c + c)
+      .join("");
   }
   const r = Math.max(0, parseInt(color.slice(0, 2), 16) * (1 - amount));
   const g = Math.max(0, parseInt(color.slice(2, 4), 16) * (1 - amount));
@@ -481,22 +481,19 @@ const darkenColor = (hex, amount) => {
     .padStart(2, "0")}${Math.round(b).toString(16).padStart(2, "0")}`;
 };
 
-function daysToMilliseconds(days) {
-  return days * 24 * 60 * 60 * 1000;
-}
+const daysToMilliseconds = (days) => days * 24 * 60 * 60 * 1000;
 
 const TrainingSchedule = () => {
   const dispatch = useDispatch();
-  const { trainingSchedules, subjects, departments, loading, error } = useSelector(
-    (state) => state.admin
-  );
+  const { trainingSchedules, subjects, departments, loading, error } =
+    useSelector((state) => state.admin);
 
-  const today = moment();
+  const today = moment().startOf("day");
   const [visibleTimeStart, setVisibleTimeStart] = useState(
-    today.clone().startOf("week").startOf("day").valueOf()
+    today.clone().startOf("week").valueOf()
   );
   const [visibleTimeEnd, setVisibleTimeEnd] = useState(
-    today.clone().endOf("week").add(1, "day").startOf("day").valueOf()
+    today.clone().endOf("week").add(1, "day").valueOf()
   );
   const [zoomLevel, setZoomLevel] = useState(7);
   const timelineRef = useRef(null);
@@ -505,6 +502,7 @@ const TrainingSchedule = () => {
   const maxZoomDays = 120;
   const zoomStep = 7;
   const moveStepDays = 7;
+  const buffer = 2; // Optimized buffer per v0.30.0 beta
 
   useEffect(() => {
     dispatch(fetchTrainingSchedules());
@@ -518,7 +516,7 @@ const TrainingSchedule = () => {
       if (allDates.length > 0) {
         const minDate = moment.min(allDates.map((d) => moment(d)));
         const maxDate = moment.max(allDates.map((d) => moment(d)));
-        // Optional: Uncomment to set timeline to full data range
+        // Optional: Adjust visible range to data bounds
         // setVisibleTimeStart(minDate.startOf("day").valueOf());
         // setVisibleTimeEnd(maxDate.add(1, "day").startOf("day").valueOf());
       }
@@ -535,7 +533,8 @@ const TrainingSchedule = () => {
       (s) => s._id === (schedule.subjectId._id || schedule.subjectId)
     );
     const subjectColor =
-      subjectColors[subjects.indexOf(subject) % subjectColors.length] || "#4f46e5";
+      subjectColors[subjects.indexOf(subject) % subjectColors.length] ||
+      "#4f46e5";
     const classDates = schedule.classDates || [];
 
     return classDates.map((classDate, index) => {
@@ -549,21 +548,19 @@ const TrainingSchedule = () => {
         end_time: end,
         canMove: false,
         canResize: false,
-        color: subjectColor,
+        itemProps: {
+          style: {
+            background: subjectColor,
+            borderColor: darkenColor(subjectColor, 0.1),
+          },
+        },
       };
     });
   });
 
-  const itemRenderer = ({ item, itemContext, getItemProps, timelineContext }) => {
-    const backgroundColor = item.color || "#4f46e5";
-    const borderColor = darkenColor(backgroundColor, 0.1);
-    const visibleRange =
-      timelineContext.visibleTimeEnd - timelineContext.visibleTimeStart;
-    // Use viewport width minus minimized sidebar (4rem)
-    const canvasWidth = window.innerWidth - 64; // 4rem = 64px
-    const millisecondsPerDay = daysToMilliseconds(1);
-    const dayWidth = (millisecondsPerDay / visibleRange) * canvasWidth;
-
+  const itemRenderer = ({ item, itemContext, getItemProps }) => {
+    const backgroundColor = item.itemProps.style.background;
+    const borderColor = item.itemProps.style.borderColor;
     return (
       <div
         {...getItemProps({
@@ -575,13 +572,9 @@ const TrainingSchedule = () => {
             fontSize: "12px",
             padding: "4px 8px",
             boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-            margin: "4px 0",
-            width: `${dayWidth}px`,
-            maxWidth: `${dayWidth}px`,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
-            pointerEvents: "none",
             boxSizing: "border-box",
           },
         })}
@@ -594,51 +587,58 @@ const TrainingSchedule = () => {
   const handleZoomIn = () => {
     const newZoomLevel = Math.max(minZoomDays, zoomLevel - zoomStep);
     setZoomLevel(newZoomLevel);
-    const newEnd = moment(visibleTimeStart)
-      .add(newZoomLevel, "days")
-      .startOf("day")
-      .valueOf();
-    setVisibleTimeEnd(newEnd);
+    setVisibleTimeEnd(
+      moment(visibleTimeStart).add(newZoomLevel, "days").valueOf()
+    );
   };
 
   const handleZoomOut = () => {
     const newZoomLevel = Math.min(maxZoomDays, zoomLevel + zoomStep);
     setZoomLevel(newZoomLevel);
-    const newEnd = moment(visibleTimeStart)
-      .add(newZoomLevel, "days")
-      .startOf("day")
-      .valueOf();
-    setVisibleTimeEnd(newEnd);
+    setVisibleTimeEnd(
+      moment(visibleTimeStart).add(newZoomLevel, "days").valueOf()
+    );
   };
 
   const handleMoveLeft = () => {
-    const currentCenter = (visibleTimeStart + visibleTimeEnd) / 2;
-    const newCenter = moment(currentCenter)
+    const newStart = moment(visibleTimeStart)
       .subtract(moveStepDays, "days")
       .valueOf();
-    const newRange = visibleTimeEnd - visibleTimeStart;
-    const newStart = moment(newCenter - newRange / 2)
-      .startOf("day")
-      .valueOf();
-    const newEnd = moment(newCenter + newRange / 2)
-      .startOf("day")
+    const newEnd = moment(visibleTimeEnd)
+      .subtract(moveStepDays, "days")
       .valueOf();
     setVisibleTimeStart(newStart);
     setVisibleTimeEnd(newEnd);
   };
 
   const handleMoveRight = () => {
-    const currentCenter = (visibleTimeStart + visibleTimeEnd) / 2;
-    const newCenter = moment(currentCenter).add(moveStepDays, "days").valueOf();
-    const newRange = visibleTimeEnd - visibleTimeStart;
-    const newStart = moment(newCenter - newRange / 2)
-      .startOf("day")
+    const newStart = moment(visibleTimeStart)
+      .add(moveStepDays, "days")
       .valueOf();
-    const newEnd = moment(newCenter + newRange / 2)
-      .startOf("day")
-      .valueOf();
+    const newEnd = moment(visibleTimeEnd).add(moveStepDays, "days").valueOf();
     setVisibleTimeStart(newStart);
     setVisibleTimeEnd(newEnd);
+  };
+
+  // Fix for scrolling: Handle timeline scroll events
+  const handleTimeChange = (
+    newVisibleTimeStart,
+    newVisibleTimeEnd,
+    updateScrollCanvas
+  ) => {
+    const duration = newVisibleTimeEnd - newVisibleTimeStart;
+    // Respect zoom constraints
+    if (
+      duration >= daysToMilliseconds(minZoomDays) &&
+      duration <= daysToMilliseconds(maxZoomDays)
+    ) {
+      setVisibleTimeStart(newVisibleTimeStart);
+      setVisibleTimeEnd(newVisibleTimeEnd);
+      setZoomLevel(Math.round(duration / daysToMilliseconds(1)));
+    } else {
+      // Reset to current bounds if constraints are violated
+      updateScrollCanvas(visibleTimeStart, visibleTimeEnd);
+    }
   };
 
   const timeSteps = {
@@ -726,10 +726,6 @@ const TrainingSchedule = () => {
     height: Math.max(100, (ganttData.length - 1) * 40 + 50),
     gantt: {
       trackHeight: 30,
-      defaultStyle: {
-        fill: "#4CAF50",
-        stroke: "#388E3C",
-      },
       barCornerRadius: 3,
       labelStyle: {
         fontName: "Arial",
@@ -751,9 +747,9 @@ const TrainingSchedule = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 dark:bg-gray-900 z-10 training-schedule-container" style={{ overflowX: "hidden" }}>
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 border-b pb-2 text-gray-900 !dark:text-gray-100">
+    <div className="min-h-screen p-8 dark:bg-gray-900 training-schedule-container">
+      <div>
+        <h1 className="text-3xl font-bold mb-6 border-b pb-2 text-gray-900 dark:text-gray-100">
           Training Schedule
         </h1>
 
@@ -793,12 +789,7 @@ const TrainingSchedule = () => {
               {moment(visibleTimeEnd).format("MMMM D, YYYY")}
             </h2>
 
-            {loading && (
-              <p className="text-gray-500 text-center py-4 dark:text-gray-400">
-                {/* Loading schedules... */}
-                <Spinner/>
-              </p>
-            )}
+            {loading && <Spinner />}
             {error && (
               <p className="text-red-600 text-center py-4 font-medium dark:text-red-400">
                 {error}
@@ -806,34 +797,37 @@ const TrainingSchedule = () => {
             )}
 
             {groups.length > 0 && items.length > 0 ? (
-              <div className="relative overflow-x-hidden">
-                <Timeline
-                  ref={timelineRef}
-                  groups={groups}
-                  items={items}
-                  visibleTimeStart={visibleTimeStart}
-                  visibleTimeEnd={visibleTimeEnd}
-                  minZoom={daysToMilliseconds(minZoomDays)}
-                  maxZoom={daysToMilliseconds(maxZoomDays)}
-                  lineHeight={60}
-                  itemHeightRatio={0.9}
-                  sidebarWidth={300}
-                  sidebarContent={
-                    <div className="p-4 bg-gray-100 text-gray-800 font-semibold dark:bg-gray-700 dark:text-gray-200">
-                      Subjects
-                    </div>
-                  }
-                  stackItems={false}
-                  timeSteps={timeSteps}
-                  dragSnap={daysToMilliseconds(1)}
-                  traditionalZoom={false}
-                  canMove={false}
-                  canResize={false}
-                  itemRenderer={itemRenderer}
-                  className="rounded-md border border-gray-200"
-                  key={`${visibleTimeStart}-${visibleTimeEnd}`}
-                />
-              </div>
+              <Timeline
+                ref={timelineRef}
+                groups={groups}
+                items={items}
+                visibleTimeStart={visibleTimeStart}
+                visibleTimeEnd={visibleTimeEnd}
+                minZoom={daysToMilliseconds(minZoomDays)}
+                maxZoom={daysToMilliseconds(maxZoomDays)}
+                lineHeight={60}
+                itemHeightRatio={0.9}
+                sidebarWidth={300}
+                sidebarContent={
+                  <div className="p-4 bg-gray-100 text-gray-800 font-semibold dark:bg-gray-700 dark:text-gray-200">
+                    Subjects
+                  </div>
+                }
+                stackItems={false}
+                timeSteps={timeSteps}
+                dragSnap={daysToMilliseconds(1)}
+                traditionalZoom={false}
+                canMove={false}
+                canResize={false}
+                itemRenderer={itemRenderer}
+                buffer={buffer}
+                onTimeChange={handleTimeChange} // Added to fix scrolling
+                className="rounded-md border border-gray-200"
+              >
+                <TimelineMarkers>
+                  <TodayMarker />
+                </TimelineMarkers>
+              </Timeline>
             ) : (
               !loading && (
                 <p className="text-gray-500 text-center py-4 dark:text-gray-400">
@@ -844,18 +838,12 @@ const TrainingSchedule = () => {
           </div>
         </div>
 
-        {/* Gantt Chart Section */}
         <div className="mt-8 bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-800">
           <div className="p-6">
             <h2 className="text-xl font-semibold text-gray-700 mb-4 dark:text-gray-300">
               Gantt Chart Overview (Completion Progress by Classes)
             </h2>
-            {loading && (
-              <p className="text-gray-500 text-center py-4 dark:text-gray-400">
-                {/* Loading Gantt chart... */}
-                <Spinner/>
-              </p>
-            )}
+            {loading && <Spinner />}
             {error && (
               <p className="text-red-600 text-center py-4 font-medium dark:text-red-400">
                 {error}
