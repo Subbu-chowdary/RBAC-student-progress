@@ -1,56 +1,50 @@
-// college-portal/client/src/App.js
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { checkAuth } from "./redux/slices/authSlice";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./components/Login";
 import AdminPage from "./pages/AdminPage";
 import Reports from "./components/admin/Reports";
-import TrainingSchedule from "./components/admin/TrainingSchedule";
-import StudentRecords from "./components/admin/StudentRecords";
-import UploadDataModal from "./components/admin/UploadDataModal";
+import TrainingSchedule from "./components/admin/TrainingSchedule"; 
+import StudentRecords from "./components/admin/StudentRecords"; 
+import UploadDataModal from "./components/admin/UploadDataModal"; 
 import StudentDetails from "./components/students/StudentDetails";
 import AdminLayout from "./components/AdminLayout";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
 import ProfilePage from "./pages/ProfilePage";
+import Spinner from "./components/Spinner";
 import "./styles/App.css";
 
-import Spinner from "./components/Spinner"; // Import the Spinner component
-
+// PrivateRoute Component
 const PrivateRoute = ({ children, allowedRole }) => {
-  const { user, isAuthenticated, authChecked } = useSelector(
-    (state) => state.auth
-  );
+  const { user, isAuthenticated, authChecked } = useSelector(state => state.auth);
 
   if (!authChecked) {
-    // return <div>Loading...</div>;
-    return <Spinner />; // Replace Loading... with Spinner
+    return <Spinner />; // Show spinner until auth check is complete
   }
 
   if (!allowedRole) {
     return isAuthenticated ? children : <Navigate to="/login" />;
   }
 
-  return isAuthenticated && user && user.role === allowedRole ? (
-    children
-  ) : (
-    <Navigate to="/login" />
-  );
+  return isAuthenticated && user?.role === allowedRole
+    ? children
+    : <Navigate to="/login" />;
 };
 
 function App() {
-  const { isAuthenticated, authChecked } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { isAuthenticated, authChecked } = useSelector(state => state.auth);
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
 
   if (!authChecked) {
-    // return <div>Loading...</div>;
-    return <Spinner />; // Replace Loading... with Spinner
+    return <Spinner />;
   }
 
   return (
@@ -58,10 +52,7 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
-          <Route
-            path="/"
-            element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
-          />
+          <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route
             path="/admin"

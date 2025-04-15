@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");  // <-- Add this!
 const connectDB = require("./config/db");
 require("dotenv").config();
 
@@ -13,8 +14,13 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin:true,  // Replace with your frontend URL
+  credentials: true                // Allow cookies to be sent!
+}));
+
 app.use(express.json());
+app.use(cookieParser());            // <-- Add this after express.json()
 
 // Connect to MongoDB
 connectDB();
@@ -25,7 +31,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
-app.use("/api/users", usersRoutes); // New users routes
+app.use("/api/users", usersRoutes); 
 
 // Error handling middleware
 app.use((err, req, res, next) => {

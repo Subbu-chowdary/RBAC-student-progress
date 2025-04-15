@@ -28,7 +28,9 @@ const Login = () => {
     e.preventDefault();
     const result = await dispatch(login({ identifier, password }));
     if (login.fulfilled.match(result)) {
-      navigate("/");
+      // Store the token in localStorage
+      localStorage.setItem("token", result.payload.token); // Save token in localStorage
+      navigate("/"); // Navigate to the home page or dashboard
     }
   };
 
