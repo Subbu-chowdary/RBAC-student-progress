@@ -22,12 +22,14 @@ const ProfileCard = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <div className="bg-white">
       <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
         Profile
       </h2>
       {loading && (
-        <p className="text-blue-500 dark:text-blue-400 mb-4"><Spinner/></p>
+        <p className="text-blue-500 dark:text-blue-400 mb-4">
+          <Spinner />
+        </p>
       )}
       {error && (
         <p className="text-red-500 dark:text-red-400 mb-4">Error: {error}</p>

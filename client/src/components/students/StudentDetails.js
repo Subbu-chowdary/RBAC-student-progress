@@ -30,11 +30,9 @@ ChartJS.register(
 
 const StudentDetails = () => {
   const { id } = useParams();
-  const { students, subjects } = useSelector(
-    (state) => state.admin
-  );
+  const { students, subjects } = useSelector((state) => state.admin);
   const thisstudent = students.find((student) => student._id === id);
-    const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -164,55 +162,88 @@ const StudentDetails = () => {
   const getStudentSubjects = (student) => {
     if (!student.department?._id) return [];
     return subjects.filter(
-        (subject) => subject.departmentId?._id === student.department?._id
+      (subject) => subject.departmentId?._id === student.department?._id
     );
-};
+  };
 
-const columns = [ {name:"Date", selector: row => row.date, sortable: true },
-  {name:"Subject", selector: row => row.subject, sortable: true },
-  {name:"Marks", selector: row => row.marks, sortable: true },
-  {name:"Total Marks", selector: row => row.totalMarks, sortable: true },
-  {name:"Percentage", selector: row => row.percentage, sortable: true },
-]
-;
-
+  const columns = [
+    { name: "Date", selector: (row) => row.date, sortable: true },
+    { name: "Subject", selector: (row) => row.subject, sortable: true },
+    { name: "Marks", selector: (row) => row.marks, sortable: true },
+    { name: "Total Marks", selector: (row) => row.totalMarks, sortable: true },
+    { name: "Percentage", selector: (row) => row.percentage, sortable: true },
+  ];
   const { lineData, barData } = getChartData();
   const tableData = getTableData();
 
   return (
     <div style={{ paddingTop: "60px" }}>
-      <h1><strong>Student Details</strong></h1>
+      <h1>
+        <strong>Student Details</strong>
+      </h1>
       <hr />
       <br />
       <div>
         {thisstudent ? (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
-              <p><strong>Name:</strong> {thisstudent.name}</p>
-              <p><strong>Student ID:</strong> {thisstudent.studentId}</p>
-              <p><strong>Email:</strong> {thisstudent.email}</p>
-              <p><strong>CGPA:</strong> {thisstudent.cgpa}</p>
-              <p><strong>Degree:</strong> {thisstudent.degree}</p>
-              <p><strong>Branch:</strong> {thisstudent.branch}</p>
-              <p><strong>College:</strong> {thisstudent.college}</p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "10px",
+              }}
+            >
+              <p>
+                <strong>Name:</strong> {thisstudent.name}
+              </p>
+              <p>
+                <strong>Student ID:</strong> {thisstudent.studentId}
+              </p>
+              <p>
+                <strong>Email:</strong> {thisstudent.email}
+              </p>
+              <p>
+                <strong>CGPA:</strong> {thisstudent.cgpa}
+              </p>
+              <p>
+                <strong>Degree:</strong> {thisstudent.degree}
+              </p>
+              <p>
+                <strong>Branch:</strong> {thisstudent.branch}
+              </p>
+              <p>
+                <strong>College:</strong> {thisstudent.college}
+              </p>
             </div>
             <br />
             <hr />
             <br />
             <div>
-              <h2><strong>Department</strong> {thisstudent.department? thisstudent.department.name: 'No Department assigned'}</h2>
+              <h2>
+                <strong>Department</strong>{" "}
+                {thisstudent.department
+                  ? thisstudent.department.name
+                  : "No Department assigned"}
+              </h2>
               <hr />
-              <br/>
-              <h2><strong>Subjects</strong></h2>
+              <br />
+              <h2>
+                <strong>Subjects</strong>
+              </h2>
               <hr />
               <div>
-                {getStudentSubjects(thisstudent).length > 0 ? (<ul>
-                  {getStudentSubjects(thisstudent).map(subject => <li>{subject.name}</li>) }               
-                </ul>  ): 'No Subjects assigned'}
+                {getStudentSubjects(thisstudent).length > 0 ? (
+                  <ul>
+                    {getStudentSubjects(thisstudent).map((subject) => (
+                      <li>{subject.name}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  "No Subjects assigned"
+                )}
               </div>
-                          
-              <br/>
 
+              <br />
             </div>
             <div className="space-y-8">
               {lineData && (
@@ -281,7 +312,7 @@ const columns = [ {name:"Date", selector: row => row.date, sortable: true },
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
                   Detailed Marks
                 </h3>
-                
+
                 <div className="overflow-x-auto">
                   <DataTable
                     columns={columns}
@@ -302,6 +333,6 @@ const columns = [ {name:"Date", selector: row => row.date, sortable: true },
       </div>
     </div>
   );
-}
+};
 
 export default StudentDetails;

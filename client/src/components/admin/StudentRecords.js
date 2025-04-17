@@ -46,6 +46,9 @@ const StudentRecords = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // State for sorting
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+
   // Fetch students on mount
   useEffect(() => {
     dispatch(fetchStudents());
@@ -203,12 +206,58 @@ const StudentRecords = () => {
 
   const tableData = getTableData();
 
-  // Filter table data based on search query
-  const filteredTableData = tableData.filter(
-    (record) =>
-      record.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      record.date.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Sorting logic
+  const sortTableData = (data, key, direction) => {
+    return [...data].sort((a, b) => {
+      let aValue = a[key];
+      let bValue = b[key];
+
+      // Handle specific field types
+      if (key === "date") {
+        aValue = new Date(aValue.split("-").reverse().join("-"));
+        bValue = new Date(bValue.split("-").reverse().join("-"));
+      } else if (key === "percentage") {
+        aValue = parseFloat(aValue);
+        bValue = parseFloat(bValue);
+      } else if (key === "marks" || key === "totalMarks") {
+        aValue = Number(aValue);
+        bValue = Number(bValue);
+      } else {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (aValue < bValue) return direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  };
+
+  // Handle sort click
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Apply sorting to filtered table data
+  const filteredTableData = sortConfig.key
+    ? sortTableData(
+        tableData.filter(
+          (record) =>
+            record.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            record.date.toLowerCase().includes(searchQuery.toLowerCase())
+        ),
+        sortConfig.key,
+        sortConfig.direction
+      )
+    : tableData.filter(
+        (record) =>
+          record.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          record.date.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
   // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -272,7 +321,7 @@ const StudentRecords = () => {
 
   if (loading) {
     return (
-      <div className="p-6 text-center text-gray-700 dark:text-white">
+      <div className="p-14 text-center text-themecolor-800 font-sans">
         <Spinner />
       </div>
     );
@@ -280,22 +329,22 @@ const StudentRecords = () => {
 
   if (error) {
     return (
-      <div className="p-6 text-center text-red-500 dark:text-white">
-        {error}
-      </div>
+      <div className="p-14 text-center text-red-500 font-sans">{error}</div>
     );
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 dark:text-white">
+    <div className="p-14 bg-themecolor-50 font-sans">
+      <h2 className="text-2xl font-bold text-themecolor-900 mb-14 font-display">
         Student Records Visualization
       </h2>
 
       {/* Selectors */}
-      <div className="mb-6 space-y-4">
+      <div className="mb-14 space-y-4">
         <div>
-          <label className="block mb-2 dark:text-white">Select Student</label>
+          <label className="block mb-2 text-themecolor-800 font-sans">
+            Select Student
+          </label>
           <Select
             options={studentOptions}
             value={selectedStudent}
@@ -308,8 +357,31 @@ const StudentRecords = () => {
               setCurrentPage(1);
             }}
             placeholder="Select a student..."
-            className="react-select w-full"
+            className="react-select w-1/2"
             classNamePrefix="react-select"
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: "#DBE9FA", // themecolor-100
+                borderColor: "#8EB8FF", // themecolor-400
+                color: "#002F7A", // themecolor-900
+                fontFamily: "Poppins, sans-serif",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "#002F7A", // themecolor-900
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: "#DBE9FA", // themecolor-100
+              }),
+              option: (base, { isFocused }) => ({
+                ...base,
+                backgroundColor: isFocused ? "#C2D6FF" : "#DBE9FA", // themecolor-200 / themecolor-100
+                color: "#002F7A", // themecolor-900
+                fontFamily: "Poppins, sans-serif",
+              }),
+            }}
           />
         </div>
 
@@ -317,7 +389,7 @@ const StudentRecords = () => {
           <>
             {subjectOptions.length > 0 && (
               <div>
-                <label className="block text-gray-700 mb-2 dark:text-white">
+                <label className="block mb-2 text-themecolor-800 font-sans">
                   Select Subject (Optional)
                 </label>
                 <Select
@@ -325,9 +397,32 @@ const StudentRecords = () => {
                   value={selectedSubject}
                   onChange={setSelectedSubject}
                   placeholder="Select a subject..."
-                  className="react-select w-full"
+                  className="react-select w-1/2"
                   classNamePrefix="react-select"
                   isClearable
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: "#DBE9FA", // themecolor-100
+                      borderColor: "#8EB8FF", // themecolor-400
+                      color: "#002F7A", // themecolor-900
+                      fontFamily: "Poppins, sans-serif",
+                    }),
+                    singleValue: (base) => ({
+                      ...base,
+                      color: "#002F7A", // themecolor-900
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      backgroundColor: "#DBE9FA", // themecolor-100
+                    }),
+                    option: (base, { isFocused }) => ({
+                      ...base,
+                      backgroundColor: isFocused ? "#C2D6FF" : "#DBE9FA", // themecolor-200 / themecolor-100
+                      color: "#002F7A", // themecolor-900
+                      fontFamily: "Poppins, sans-serif",
+                    }),
+                  }}
                 />
               </div>
             )}
@@ -335,7 +430,7 @@ const StudentRecords = () => {
             {/* Date Range Pickers */}
             <div className="flex space-x-4">
               <div>
-                <label className="block text-gray-700 mb-2 dark:text-white">
+                <label className="block mb-2 text-themecolor-800 font-sans">
                   From Date
                 </label>
                 <DatePicker
@@ -345,12 +440,12 @@ const StudentRecords = () => {
                   startDate={startDate}
                   endDate={endDate}
                   placeholderText="Select start date"
-                  className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+                  className="w-full p-2 border border-themecolor-400 rounded-3xl bg-themecolor-100 text-themecolor-900 font-sans focus:outline-none focus:ring-2 focus:ring-themecolor-600"
                   dateFormat="dd-MMM-yyyy"
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 dark:text-white">
+                <label className="block mb-2 text-themecolor-800 font-sans">
                   To Date
                 </label>
                 <DatePicker
@@ -361,7 +456,7 @@ const StudentRecords = () => {
                   endDate={endDate}
                   minDate={startDate}
                   placeholderText="Select end date"
-                  className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+                  className="w-full p-2 border border-themecolor-400 rounded-3xl bg-themecolor-100 text-themecolor-900 font-sans focus:outline-none focus:ring-2 focus:ring-themecolor-600"
                   dateFormat="dd-MMM-yyyy"
                 />
               </div>
@@ -375,25 +470,40 @@ const StudentRecords = () => {
         <div className="space-y-8">
           {lineData && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 dark:text-white">
+              <h3 className="text-lg font-semibold text-themecolor-900 mb-4 font-display">
                 Marks Over Time ({selectedSubject?.label})
               </h3>
-              <div className="bg-white p-4 rounded-lg shadow">
+              <div className="bg-themecolor-50 p-4 rounded-2xl shadow-soft">
                 <Line
                   data={lineData}
                   options={{
                     responsive: true,
                     plugins: {
-                      legend: { position: "top" },
-                      title: { display: true, text: "Marks Trend" },
+                      legend: {
+                        position: "top",
+                        labels: { font: { family: "Roboto" } },
+                      },
+                      title: {
+                        display: true,
+                        text: "Marks Trend",
+                        font: { family: "Roboto" },
+                      },
                     },
                     scales: {
                       y: {
                         beginAtZero: true,
-                        title: { display: true, text: "Value" },
+                        title: {
+                          display: true,
+                          text: "Value",
+                          font: { family: "Roboto" },
+                        },
                       },
                       x: {
-                        title: { display: true, text: "Test Date" },
+                        title: {
+                          display: true,
+                          text: "Test Date",
+                          font: { family: "Roboto" },
+                        },
                       },
                     },
                   }}
@@ -404,28 +514,40 @@ const StudentRecords = () => {
 
           {barData && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 dark:text-white">
+              <h3 className="text-lg font-semibold text-themecolor-900 mb-4 font-display">
                 Average Marks Across Subjects
               </h3>
-              <div className="bg-white p-4 rounded-lg shadow">
+              <div className="bg-themecolor-50 p-4 rounded-2xl shadow-soft">
                 <Bar
                   data={barData}
                   options={{
                     responsive: true,
                     plugins: {
-                      legend: { position: "top" },
+                      legend: {
+                        position: "top",
+                        labels: { font: { family: "Roboto" } },
+                      },
                       title: {
                         display: true,
                         text: "Average Marks by Subject",
+                        font: { family: "Roboto" },
                       },
                     },
                     scales: {
                       y: {
                         beginAtZero: true,
-                        title: { display: true, text: "Average Marks" },
+                        title: {
+                          display: true,
+                          text: "Average Marks",
+                          font: { family: "Roboto" },
+                        },
                       },
                       x: {
-                        title: { display: true, text: "Subject" },
+                        title: {
+                          display: true,
+                          text: "Subject",
+                          font: { family: "Roboto" },
+                        },
                       },
                     },
                   }}
@@ -436,11 +558,11 @@ const StudentRecords = () => {
 
           {/* Table */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 dark:text-white">
+            <h3 className="text-lg font-semibold text-themecolor-900 mb-4 font-display">
               Detailed Marks
             </h3>
 
-            <div className="mb-6 flex flex-col sm:flex-row gap-4">
+            <div className="mb-14 flex flex-col sm:flex-row gap-4">
               <input
                 type="text"
                 placeholder="Search by Subject or Date..."
@@ -449,16 +571,16 @@ const StudentRecords = () => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full sm:w-1/2 p-2 border border-themecolor-400 rounded-3xl bg-themecolor-100 text-themecolor-900 font-sans focus:outline-none focus:ring-2 focus:ring-themecolor-600"
               />
               <div className="flex items-center gap-2">
-                <label className="text-gray-700 dark:text-white">
+                <label className="text-themecolor-800 font-sans">
                   Rows per page:
                 </label>
                 <select
                   value={rowsPerPage}
                   onChange={handleRowsPerPageChange}
-                  className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="p-2 border border-themecolor-400 rounded-3xl bg-themecolor-100 text-themecolor-900 font-sans focus:outline-none focus:ring-2 focus:ring-themecolor-600"
                 >
                   <option value={5}>5</option>
                   <option value={10}>10</option>
@@ -469,29 +591,54 @@ const StudentRecords = () => {
             </div>
 
             {filteredTableData.length === 0 ? (
-              <p className="text-gray-700 dark:text-white">
+              <p className="text-themecolor-800 font-sans">
                 No records found for the selected criteria.
               </p>
             ) : (
               <>
-                <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-                  <table className="w-full bg-white border border-gray-300">
-                    <thead className="sticky top-0 bg-gray-100 z-10">
+                <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-themecolor-400 scrollbar-track-themecolor-100">
+                  <table className="w-full bg-themecolor-50 border border-themecolor-400 rounded-2xl shadow-soft">
+                    <thead className="sticky top-0 bg-themecolor-200 z-10">
                       <tr>
-                        <th className="py-2 px-4 border-b text-left text-gray-700 sticky left-0 bg-gray-100 z-20 min-w-[120px]">
-                          Date
+                        <th
+                          className="py-2 px-4 border-b text-left text-themecolor-900 font-sans sticky left-0 bg-themecolor-200 z-20 min-w-[120px] cursor-pointer hover:bg-themecolor-300"
+                          onClick={() => handleSort("date")}
+                        >
+                          Date{" "}
+                          {sortConfig.key === "date" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
                         </th>
-                        <th className="py-2 px-4 border-b text-left text-gray-700 sticky left-[120px] bg-gray-100 z-20 min-w-[150px]">
-                          Subject
+                        <th
+                          className="py-2 px-4 border-b text-left text-themecolor-900 font-sans sticky left-[120px] bg-themecolor-200 z-20 min-w-[150px] cursor-pointer hover:bg-themecolor-300"
+                          onClick={() => handleSort("subject")}
+                        >
+                          Subject{" "}
+                          {sortConfig.key === "subject" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
                         </th>
-                        <th className="py-2 px-4 border-b text-left text-gray-700 min-w-[100px]">
-                          Marks
+                        <th
+                          className="py-2 px-4 border-b text-left text-themecolor-900 font-sans min-w-[100px] cursor-pointer hover:bg-themecolor-300"
+                          onClick={() => handleSort("marks")}
+                        >
+                          Marks{" "}
+                          {sortConfig.key === "marks" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
                         </th>
-                        <th className="py-2 px-4 border-b text-left text-gray-700 min-w-[100px]">
-                          Total Marks
+                        <th
+                          className="py-2 px-4 border-b text-left text-themecolor-900 font-sans min-w-[100px] cursor-pointer hover:bg-themecolor-300"
+                          onClick={() => handleSort("totalMarks")}
+                        >
+                          Total Marks{" "}
+                          {sortConfig.key === "totalMarks" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
                         </th>
-                        <th className="py-2 px-4 border-b text-left text-gray-700 min-w-[100px]">
-                          Percentage
+                        <th
+                          className="py-2 px-4 border-b text-left text-themecolor-900 font-sans min-w-[100px] cursor-pointer hover:bg-themecolor-300"
+                          onClick={() => handleSort("percentage")}
+                        >
+                          Percentage{" "}
+                          {sortConfig.key === "percentage" &&
+                            (sortConfig.direction === "asc" ? "↑" : "↓")}
                         </th>
                       </tr>
                     </thead>
@@ -499,26 +646,26 @@ const StudentRecords = () => {
                       {currentTableData.map((record, index) => (
                         <tr
                           key={index}
-                          className="hover:bg-gray-50 transition-colors duration-200"
+                          className="hover:bg-themecolor-100 transition-colors duration-200"
                         >
-                          <td className="py-2 px-4 border-b text-gray-700 sticky left-0 bg-white z-20 min-w-[120px]">
+                          <td className="py-2 px-4 border-b text-themecolor-800 font-sans sticky left-0 bg-themecolor-50 z-20 min-w-[120px]">
                             {record.date}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-700 sticky left-[120px] bg-white z-20 min-w-[150px]">
+                          <td className="py-2 px-4 border-b text-themecolor-800 font-sans sticky left-[120px] bg-themecolor-50 z-20 min-w-[150px]">
                             {record.subject}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-700 min-w-[100px]">
+                          <td className="py-2 px-4 border-b text-themecolor-800 font-sans min-w-[100px]">
                             {record.marks}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-700 min-w-[100px]">
+                          <td className="py-2 px-4 border-b text-themecolor-800 font-sans min-w-[100px]">
                             {record.totalMarks}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-700 min-w-[100px]">
+                          <td className="py-2 px-4 border-b text-themecolor-800 font-sans min-w-[100px]">
                             <span
                               className={
                                 parseInt(record.percentage) < 60
                                   ? "text-red-500"
-                                  : "text-blue-500"
+                                  : "text-themecolor-700"
                               }
                             >
                               {record.percentage}
@@ -531,7 +678,7 @@ const StudentRecords = () => {
                 </div>
 
                 <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-                  <div className="text-gray-700 dark:text-white">
+                  <div className="text-themecolor-800 font-sans">
                     Showing {indexOfFirstRow + 1} to{" "}
                     {Math.min(indexOfLastRow, filteredTableData.length)} of{" "}
                     {filteredTableData.length} entries
@@ -540,24 +687,27 @@ const StudentRecords = () => {
                     <button
                       onClick={() => paginate(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="px-3 py-1 bg-blue-500 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors duration-200"
+                      className="px-3 py-1 bg-themecolor-600 text-themecolor-50 rounded-3xl disabled:bg-themecolor-300 disabled:cursor-not-allowed hover:bg-themecolor-700 transition-colors duration-200 font-sans"
                     >
                       Previous
                     </button>
                     <div className="flex gap-1">
                       {getPaginationRange().map((item, index) =>
                         item === "..." ? (
-                          <span key={index} className="px-3 py-1 text-gray-500">
+                          <span
+                            key={index}
+                            className="px-3 py-1 text-themecolor-800 font-sans"
+                          >
                             ...
                           </span>
                         ) : (
                           <button
                             key={index}
                             onClick={() => paginate(item)}
-                            className={`px-3 py-1 rounded-md ${
+                            className={`px-3 py-1 rounded-3xl font-sans ${
                               currentPage === item
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                ? "bg-themecolor-600 text-themecolor-50"
+                                : "bg-themecolor-100 text-themecolor-800 hover:bg-themecolor-200"
                             } transition-colors duration-200`}
                           >
                             {item}
@@ -568,7 +718,7 @@ const StudentRecords = () => {
                     <button
                       onClick={() => paginate(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1 bg-blue-500 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors duration-200"
+                      className="px-3 py-1 bg-themecolor-600 text-themecolor-50 rounded-3xl disabled:bg-themecolor-300 disabled:cursor-not-allowed hover:bg-themecolor-700 transition-colors duration-200 font-sans"
                     >
                       Next
                     </button>
@@ -579,7 +729,7 @@ const StudentRecords = () => {
           </div>
         </div>
       ) : (
-        <p className="text-gray-700 dark:text-white">
+        <p className="text-themecolor-800 font-sans">
           Please select a student to view records.
         </p>
       )}

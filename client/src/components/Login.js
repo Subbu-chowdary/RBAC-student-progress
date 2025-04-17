@@ -1,90 +1,123 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../redux/slices/authSlice";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Spinner from "./Spinner"; // Import the Spinner component
-
-
 const Login = () => {
-  const [identifier, setIdentifier] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
+  const [remember, setRemember] = useState(false);
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated, authChecked } = useSelector(
-    (state) => state.auth
-  );
 
-  useEffect(() => {
-    const isDark = localStorage.getItem("darkMode") === "true";
-    document.documentElement.classList.toggle("dark", isDark);
-
-    if (authChecked && isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated, authChecked, navigate]);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const result = await dispatch(login({ identifier, password }));
-    if (login.fulfilled.match(result)) {
-      // Store the token in localStorage
-      localStorage.setItem("token", result.payload.token); // Save token in localStorage
-      navigate("/"); // Navigate to the home page or dashboard
-    }
+    // Placeholder for authentication logic
+    console.log({ username, password, remember });
+    // Example: navigate to dashboard on success
+    // navigate("/admin/dashboard");
   };
 
-  if (!authChecked) {
-    // return <div>Loading...</div>;
-    return <Spinner />; // Replace Loading... with Spinner
-  }
-
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-200">
-        <h2 className="text-3xl font-bold text-black mb-6 text-center">
+    <div className="flex justify-center items-center min-h-screen bg-themecolor-100">
+      {/* Left: Image */}
+      <div className="w-1/2 h-screen hidden lg:block">
+        <img
+          src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826"
+          alt="Background"
+          className="object-cover w-full h-full"
+        />
+      </div>
+      {/* Right: Login Form */}
+      <div className="w-full lg:w-1/2 p-14 bg-themecolor-50 rounded-2xl shadow-soft">
+        <h1 className="text-2xl font-semibold text-themecolor-900 mb-4 font-display">
           Login
-        </h2>
-
-        {error && (
-          <p className="text-red-500 mb-6 text-center font-medium">{error}</p>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-black mb-2 font-medium">
-              Name or Email
+        </h1>
+        <form onSubmit={handleSubmit}>
+          {/* Username Input */}
+          <div className="mb-14">
+            <label
+              htmlFor="username"
+              className="block text-themecolor-120 font-sans mb-2"
+            >
+              Username
             </label>
             <input
               type="text"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              required
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-black placeholder-gray-500"
-              placeholder="Enter your username or email"
+              id="username"
+              name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full border-2 border-themecolor-500 rounded-3xl py-2 px-3 bg-themecolor-50 text-themecolor-120 font-sans focus:outline-none focus:ring-2 focus:ring-themecolor-600"
+              autoComplete="off"
             />
           </div>
-          <div>
-            <label className="block text-black mb-2 font-medium">
+          {/* Password Input */}
+          <div className="mb-14">
+            <label
+              htmlFor="password"
+              className="block text-themecolor-120 font-sans mb-2"
+            >
               Password
             </label>
             <input
               type="password"
+              id="password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-black placeholder-gray-500"
-              placeholder="Enter your password"
+              className="w-full border-2 border-themecolor-500 rounded-3xl py-2 px-3 bg-themecolor-50 text-themecolor-120 font-sans focus:outline-none focus:ring-2 focus:ring-themecolor-600"
+              autoComplete="off"
             />
           </div>
+          {/* Remember Me Checkbox */}
+          <div className="mb-14 flex items-center">
+            <input
+              type="checkbox"
+              id="remember"
+              name="remember"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="text-themecolor-500 focus:ring-themecolor-600"
+            />
+            <label
+              htmlFor="remember"
+              className="text-themecolor-120 font-sans ml-2"
+            >
+              Remember Me
+            </label>
+          </div>
+          {/* Forgot Password Link */}
+          <div className="mb-14">
+            <a
+              href="/forgot-password"
+              className="text-themecolor-600 hover:text-themecolor-700 font-sans hover:underline"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/forgot-password");
+              }}
+            >
+              Forgot Password?
+            </a>
+          </div>
+          {/* Login Button */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+            className="bg-themecolor-600 hover:bg-themecolor-700 text-themecolor-50 font-semibold rounded-3xl py-2 px-4 w-full font-sans"
           >
-            {loading ? "Logging in..." : "Login"}
+            Login
           </button>
         </form>
+        {/* Sign up Link */}
+        <div className="mt-14 text-center">
+          <a
+            href="/signup"
+            className="text-themecolor-600 hover:text-themecolor-700 font-sans hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/signup");
+            }}
+          >
+            Sign up Here
+          </a>
+        </div>
       </div>
     </div>
   );

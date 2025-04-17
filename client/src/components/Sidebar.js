@@ -12,7 +12,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
-  FaCalendarAlt, // Ensure this is correctly imported
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -21,9 +21,9 @@ const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
   const role = user?.role;
 
-  const [isMinimized, setIsMinimized] = useState(() => {
-    return localStorage.getItem("sidebarMinimized") === "true";
-  });
+  const [isMinimized, setIsMinimized] = useState(
+    () => localStorage.getItem("sidebarMinimized") === "true"
+  );
 
   useEffect(() => {
     localStorage.setItem("sidebarMinimized", isMinimized);
@@ -39,20 +39,12 @@ const Sidebar = () => {
     { path: "/admin", label: "Admin Dashboard", icon: <FaTachometerAlt /> },
     { path: "/reports", label: "Reports", icon: <FaChartBar /> },
     {
-      path: "/training-schedule", // Add the new route for Training Schedule
+      path: "/training-schedule",
       label: "Training Schedule",
       icon: <FaCalendarAlt />,
     },
-    {
-      path: "/student-records",
-      label: "Student Records",
-      icon: <FaBook />,
-    },
-    {
-      path: "/uploads",
-      label: "Upload Data",
-      icon: <FaUpload />,
-    },
+    { path: "/student-records", label: "Student Records", icon: <FaBook /> },
+    { path: "/uploads", label: "Upload Data", icon: <FaUpload /> },
   ];
 
   const teacherLinks = [
@@ -89,18 +81,20 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-gray-800 text-white p-4 z-20 transition-all duration-300 ${
+      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-themecolor-125 text-themecolor-100 p-4 z-20 transition-all duration-300 ${
         isMinimized ? "w-16" : "w-64"
-      }`} // w-16 is 4rem (minimized), w-64 is 16rem (maximized)
-      style={{overflowY: "auto", overflowX: "hidden"}}
+      }`}
+      style={{ overflowY: "auto", overflowX: "hidden" }}
     >
       <div className="flex justify-between items-center mb-6">
         {!isMinimized && (
-          <h2 className="text-2xl font-bold whitespace-nowrap">OJT監視</h2>
+          <h2 className="text-2xl font-bold whitespace-nowrap text-themecolor-100">
+            OJT監視
+          </h2>
         )}
         <button
           onClick={() => setIsMinimized(!isMinimized)}
-          className="text-gray-300 hover:text-white focus:outline-none"
+          className="text-themecolor-300 hover:text-themecolor-200 focus:outline-none"
           aria-label={isMinimized ? "Expand Sidebar" : "Minimize Sidebar"}
         >
           {isMinimized ? <FaBars size={20} /> : <FaTimes size={20} />}
@@ -116,8 +110,8 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center p-2 rounded-lg transition-colors duration-200 ${
                     isActive
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-300 hover:bg-gray-700"
+                      ? "bg-themecolor-700 text-themecolor-100"
+                      : "text-themecolor-300 hover:bg-themecolor-800"
                   }`
                 }
               >
@@ -126,7 +120,7 @@ const Sidebar = () => {
                   <span className="ml-3 truncate">{link.label}</span>
                 )}
                 {isMinimized && (
-                  <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-700 text-white text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                  <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-themecolor-800 text-themecolor-100 text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                     {link.label}
                   </span>
                 )}
@@ -136,14 +130,14 @@ const Sidebar = () => {
           <li className="relative group">
             <button
               onClick={handleLogout}
-              className="flex items-center w-full text-left p-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors duration-200"
+              className="flex items-center w-full text-left p-2 rounded-lg text-themecolor-300 hover:bg-themecolor-800 transition-colors duration-200"
             >
               <span className="text-xl">
                 <FaSignOutAlt />
               </span>
               {!isMinimized && <span className="ml-3">Logout</span>}
               {isMinimized && (
-                <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-700 text-white text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-themecolor-800 text-themecolor-100 text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                   Logout
                 </span>
               )}
@@ -156,7 +150,7 @@ const Sidebar = () => {
           style={{
             bottom: 0,
             position: "absolute",
-            color: "white",
+            color: "themecolor-300",
             fontSize: "12px",
             padding: "10px",
           }}

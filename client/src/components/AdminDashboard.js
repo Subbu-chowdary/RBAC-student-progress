@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchStudents,
@@ -6,35 +6,14 @@ import {
   fetchSubjects,
   fetchDepartments,
   fetchUsers,
-  addStudent,
   addTeacher,
   addDepartment,
   addSubject,
   assignTeacherToSubject,
   addMarks,
 } from "../redux/slices/adminSlice";
-
-
-import Spinner from "./Spinner";
-
-
-const Modal = ({ isOpen, onClose, title, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
-          <button onClick={onClose} className="text-gray-600">
-            ✕
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-};
+import AddStudentModel from "./models/addStudentModel";
+import Modal from "./models/modal";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -49,13 +28,6 @@ const AdminDashboard = () => {
     addMarks: false,
   });
 
-  const [newStudent, setNewStudent] = useState({
-    email: "",
-    password: "",
-    name: "",
-    department: "",
-    studentId: "",
-  });
   const [newTeacher, setNewTeacher] = useState({
     email: "",
     password: "",
@@ -78,9 +50,6 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    const isDark = localStorage.getItem("darkMode") === "true";
-    document.documentElement.classList.toggle("dark", isDark);
-
     const fetchData = async () => {
       try {
         await Promise.all([
@@ -97,45 +66,6 @@ const AdminDashboard = () => {
     };
     fetchData();
   }, [dispatch]);
-
-  const handleAddStudent = async (e) => {
-    e.preventDefault();
-    setValidationError("");
-    setSuccessMessage("");
-
-    const emailExistsInUsers = users.some(
-      (user) => user.email?.toLowerCase() === newStudent.email.toLowerCase()
-    );
-    const studentIdExists =
-      newStudent.studentId &&
-      students.some((student) => student.studentId === newStudent.studentId);
-
-    if (emailExistsInUsers) {
-      setValidationError("A user with this email already exists.");
-      return;
-    }
-    if (studentIdExists) {
-      setValidationError("A student with this Student ID already exists.");
-      return;
-    }
-
-    try {
-      await dispatch(addStudent(newStudent)).unwrap();
-      setNewStudent({
-        email: "",
-        password: "",
-        name: "",
-        department: "",
-        studentId: "",
-      });
-      setSuccessMessage("Student added successfully!");
-      await dispatch(fetchUsers()).unwrap();
-      setModalState((prev) => ({ ...prev, addStudent: false }));
-    } catch (err) {
-      console.error("Failed to add student:", err);
-      setValidationError(err.message || "Failed to add student.");
-    }
-  };
 
   const handleAddTeacher = async (e) => {
     e.preventDefault();
@@ -158,8 +88,8 @@ const AdminDashboard = () => {
       await dispatch(fetchUsers()).unwrap();
       setModalState((prev) => ({ ...prev, addTeacher: false }));
     } catch (err) {
-      console.error("Failed to add teacher:", err);
-      setValidationError(err.message || "Failed to add teacher.");
+      console.error("Failed to add trainer:", err);
+      setValidationError(err.message || "Failed to add trainer.");
     }
   };
 
@@ -236,191 +166,109 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* <div className="flex-1 p-6 bg-gray-50 dark:bg-gray-900"> */}
-      <div className="flex-1 p-6">
-        <div className=" mx-auto">
-          {/* <h1 className="text-3xl font-bold text-gray-900 mb-6"> */}
-          <h1 className="text-3xl font-bold mb-6">
+    <div className="flex min-h-screen bg-themecolor-100">
+      <div className="flex-1 p-14 bg-themecolor-50">
+        <div className="mx-auto">
+          <h1 className="text-3xl font-bold text-themecolor-900 mb-14 font-display">
             Admin Dashboard
           </h1>
-          {loading && <p className="text-blue-500 mb-4">
-            {/* Loading... */}
-            <Spinner />
-            </p>}
-          {error && <p className="text-red-500 mb-4">Error: {error}</p>}
+          {loading && (
+            <p className="text-themecolor-600 mb-14 font-sans">Loading...</p>
+          )}
+          {error && (
+            <p className="text-red-500 mb-14 font-sans">Error: {error}</p>
+          )}
           {validationError && (
-            <p className="text-red-500 mb-4">{validationError}</p>
+            <p className="text-red-500 mb-14 font-sans">{validationError}</p>
           )}
           {successMessage && (
-            <p className="text-green-500 mb-4">{successMessage}</p>
+            <p className="text-green-500 mb-14 font-sans">{successMessage}</p>
           )}
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-14 mb-14">
             <div
-              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
+              className="bg-themecolor-50 p-6 rounded-2xl shadow-soft cursor-pointer hover:bg-themecolor-200 transition-colors"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addStudent: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800 ">
+              <h2 className="text-xl font-semibold text-themecolor-900 font-display">
                 Add Student
               </h2>
-              <p className="text-gray-600">Click to add a new student</p>
+              <p className="text-themecolor-120 font-sans">
+                Click to add a new student
+              </p>
             </div>
             <div
-              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
+              className="bg-themecolor-50 p-6 rounded-2xl shadow-soft cursor-pointer hover:bg-themecolor-200 transition-colors"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addTeacher: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800">
-                Add Teacher
+              <h2 className="text-xl font-semibold text-themecolor-900 font-display">
+                Add Trainer
               </h2>
-              <p className="text-gray-600">Click to add a new teacher</p>
+              <p className="text-themecolor-120 font-sans">
+                Click to add a new trainer
+              </p>
             </div>
-
-{/* 
             <div
-              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
+              className="bg-themecolor-50 p-6 rounded-2xl shadow-soft cursor-pointer hover:bg-themecolor-200 transition-colors"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addDepartment: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800">
-                Add Department
+              {/* added batch here  */}
+              <h2 className="text-xl font-semibold text-themecolor-900 font-display">
+                Add Batch
               </h2>
-              <p className="text-gray-600">Click to add a new department</p>
+              <p className="text-themecolor-120 font-sans">
+                Click to add a new batch
+              </p>
             </div>
-
-             */}
             <div
-              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
+              className="bg-themecolor-50 p-6 rounded-2xl shadow-soft cursor-pointer hover:bg-themecolor-200 transition-colors"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addSubject: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-themecolor-900 font-display">
                 Add Subject
               </h2>
-              <p className="text-gray-600">Click to add a new subject</p>
+              <p className="text-themecolor-120 font-sans">
+                Click to add a new subject
+              </p>
             </div>
             <div
-              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
+              className="bg-themecolor-50 p-6 rounded-2xl shadow-soft cursor-pointer hover:bg-themecolor-200 transition-colors"
               onClick={() =>
                 setModalState((prev) => ({ ...prev, addMarks: true }))
               }
             >
-              <h2 className="text-xl font-semibold text-gray-800">Add Marks</h2>
-              <p className="text-gray-600">Click to add student marks</p>
+              <h2 className="text-xl font-semibold text-themecolor-900 font-display">
+                Add Marks
+              </h2>
+              <p className="text-themecolor-120 font-sans">
+                Click to add student marks
+              </p>
             </div>
           </div>
 
           {/* Modals */}
-          <Modal
-            isOpen={modalState.addStudent}
-            onClose={() =>
-              setModalState((prev) => ({ ...prev, addStudent: false }))
-            }
-            title="Add Student"
-          >
-            <form onSubmit={handleAddStudent} className="space-y-4">
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={newStudent.email}
-                  onChange={(e) => {
-                    const email = e.target.value;
-                    setNewStudent({ ...newStudent, email });
-                    if (email) {
-                      const emailExists = users.some(
-                        (user) =>
-                          user.email?.toLowerCase() === email.toLowerCase()
-                      );
-                      setEmailValidationMessage((prev) => ({
-                        ...prev,
-                        student: emailExists
-                          ? "This email is already in use."
-                          : "",
-                      }));
-                    } else {
-                      setEmailValidationMessage((prev) => ({
-                        ...prev,
-                        student: "",
-                      }));
-                    }
-                  }}
-                  required
-                  className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
-                />
-                {emailValidationMessage.student && (
-                  <p className="text-red-500 mt-1 text-sm">
-                    {emailValidationMessage.student}
-                  </p>
-                )}
-              </div>
-              <input
-                type="password"
-                placeholder="Password"
-                value={newStudent.password}
-                onChange={(e) =>
-                  setNewStudent({ ...newStudent, password: e.target.value })
-                }
-                required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
-              />
-              <input
-                type="text"
-                placeholder="Name"
-                value={newStudent.name}
-                onChange={(e) =>
-                  setNewStudent({ ...newStudent, name: e.target.value })
-                }
-                required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
-              />
-              <select
-                value={newStudent.department}
-                onChange={(e) =>
-                  setNewStudent({ ...newStudent, department: e.target.value })
-                }
-                required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
-              >
-                <option value="">Select Department</option>
-                {departments.map((dept) => (
-                  <option key={dept._id} value={dept._id}>
-                    {dept.name}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                placeholder="Student ID (optional)"
-                value={newStudent.studentId}
-                onChange={(e) =>
-                  setNewStudent({ ...newStudent, studentId: e.target.value })
-                }
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
-              />
-              <button
-                type="submit"
-                disabled={loading || emailValidationMessage.student !== ""}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                Add Student
-              </button>
-            </form>
-          </Modal>
+          <AddStudentModel
+            modalState={modalState.addStudent}
+            setValidationError={setValidationError}
+            setSuccessMessage={setSuccessMessage}
+            setModalState={setModalState}
+          />
 
           <Modal
             isOpen={modalState.addTeacher}
             onClose={() =>
               setModalState((prev) => ({ ...prev, addTeacher: false }))
             }
-            title="Add Teacher"
+            title="Add Trainer"
           >
             <form onSubmit={handleAddTeacher} className="space-y-4">
               <div>
@@ -450,10 +298,10 @@ const AdminDashboard = () => {
                     }
                   }}
                   required
-                  className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                  className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
                 />
                 {emailValidationMessage.teacher && (
-                  <p className="text-red-500 mt-1 text-sm">
+                  <p className="text-red-500 mt-1 text-sm font-sans">
                     {emailValidationMessage.teacher}
                   </p>
                 )}
@@ -466,7 +314,7 @@ const AdminDashboard = () => {
                   setNewTeacher({ ...newTeacher, password: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               />
               <input
                 type="text"
@@ -476,14 +324,14 @@ const AdminDashboard = () => {
                   setNewTeacher({ ...newTeacher, name: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               />
               <button
                 type="submit"
                 disabled={loading || emailValidationMessage.teacher !== ""}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-themecolor-600 text-themecolor-50 rounded-3xl shadow-soft hover:bg-themecolor-700 transition-colors disabled:bg-themecolor-300 disabled:cursor-not-allowed font-sans"
               >
-                Add Teacher
+                Add Trainer
               </button>
             </form>
           </Modal>
@@ -493,23 +341,23 @@ const AdminDashboard = () => {
             onClose={() =>
               setModalState((prev) => ({ ...prev, addDepartment: false }))
             }
-            title="Add Department"
+            title="Add Batch"
           >
             <form onSubmit={handleAddDepartment} className="space-y-4">
               <input
                 type="text"
-                placeholder="Department Name"
+                placeholder="Batch Name"
                 value={newDepartment.name}
                 onChange={(e) =>
                   setNewDepartment({ ...newDepartment, name: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-themecolor-600 text-themecolor-50 rounded-3xl shadow-soft hover:bg-themecolor-700 transition-colors disabled:bg-themecolor-300 disabled:cursor-not-allowed font-sans"
               >
                 Add Department
               </button>
@@ -532,7 +380,7 @@ const AdminDashboard = () => {
                   setNewSubject({ ...newSubject, name: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               />
               <select
                 value={newSubject.departmentId}
@@ -540,7 +388,7 @@ const AdminDashboard = () => {
                   setNewSubject({ ...newSubject, departmentId: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               >
                 <option value="">Select Department</option>
                 {departments.map((dept) => (
@@ -552,7 +400,7 @@ const AdminDashboard = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-themecolor-600 text-themecolor-50 rounded-3xl shadow-soft hover:bg-themecolor-700 transition-colors disabled:bg-themecolor-300 disabled:cursor-not-allowed font-sans"
               >
                 Add Subject
               </button>
@@ -573,7 +421,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, studentId: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               >
                 <option value="">Select Student</option>
                 {students.map((student) => (
@@ -588,7 +436,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, subjectId: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               >
                 <option value="">Select Subject</option>
                 {subjects.map((subject) => (
@@ -604,7 +452,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, testDate: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               />
               <input
                 type="number"
@@ -614,7 +462,7 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, marks: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               />
               <input
                 type="number"
@@ -624,12 +472,12 @@ const AdminDashboard = () => {
                   setNewMarks({ ...newMarks, totalMarks: e.target.value })
                 }
                 required
-                className="w-full p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                className="w-full p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-themecolor-600 text-themecolor-50 rounded-3xl shadow-soft hover:bg-themecolor-700 transition-colors disabled:bg-themecolor-300 disabled:cursor-not-allowed font-sans"
               >
                 Add Marks
               </button>
@@ -637,16 +485,16 @@ const AdminDashboard = () => {
           </Modal>
 
           {/* Assign Teacher to Subject */}
-          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Assign Teacher to Subject
+          <div className="bg-themecolor-50 p-6 rounded-2xl shadow-soft mb-14">
+            <h2 className="text-xl font-semibold text-themecolor-900 mb-4 font-display">
+              Assign Trainer to Subject
             </h2>
             {subjects.map((subject) => (
               <div
                 key={subject._id}
-                className="flex items-center justify-between p-3 border-b border-gray-200"
+                className="flex items-center justify-between p-3 border-b border-themecolor-400"
               >
-                <p className="text-gray-700">
+                <p className="text-themecolor-120 font-sans">
                   {subject.name} -{" "}
                   {subject.departmentId?.name || "No Department"}
                 </p>
@@ -655,9 +503,9 @@ const AdminDashboard = () => {
                   onChange={(e) =>
                     handleAssignTeacher(subject._id, e.target.value)
                   }
-                  className="p-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                  className="p-2 border-2 border-themecolor-500 rounded-3xl focus:outline-none focus:ring-2 focus:ring-themecolor-600 text-themecolor-120 font-sans"
                 >
-                  <option value="">Select Teacher</option>
+                  <option value="">Select Trainer</option>
                   {teachers.map((teacher) => (
                     <option key={teacher._id} value={teacher._id}>
                       {teacher.name}
@@ -669,15 +517,15 @@ const AdminDashboard = () => {
           </div>
 
           {/* Students List */}
-          {/* <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          {/* <div className="bg-themecolor-50 p-6 rounded-2xl shadow-soft mb-14">
+            <h2 className="text-xl font-semibold text-themecolor-900 mb-4 font-display">
               Students List
             </h2>
             <ul className="space-y-2">
               {students.map((student) => (
                 <li
                   key={student._id}
-                  className="p-3 border-b border-gray-200 text-gray-700"
+                  className="p-3 border-b border-themecolor-400 text-themecolor-120 font-sans"
                 >
                   {student.name} ({student.studentId}) - Email:{" "}
                   {student.userId?.email || "N/A"} - Department:{" "}
@@ -688,15 +536,15 @@ const AdminDashboard = () => {
           </div> */}
 
           {/* Teachers List */}
-          {/* <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          {/* <div className="bg-themecolor-50 p-6 rounded-2xl shadow-soft">
+            <h2 className="text-xl font-semibold text-themecolor-900 mb-4 font-display">
               Teachers List
             </h2>
             <ul className="space-y-2">
               {teachers.map((teacher) => (
                 <li
                   key={teacher._id}
-                  className="p-3 border-b border-gray-200 text-gray-700"
+                  className="p-3 border-b border-themecolor-400 text-themecolor-120 font-sans"
                 >
                   {teacher.name}
                 </li>

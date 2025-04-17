@@ -1,7 +1,5 @@
-// college-portal/client/src/components/StudentsList.js
 import React from "react";
 import { useSelector } from "react-redux";
-
 import Spinner from "../Spinner";
 
 const StudentsList = () => {
@@ -21,57 +19,54 @@ const StudentsList = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-      <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
+    <div className="bg-themecolor-50 p-14 rounded-2xl shadow-soft mb-14">
+      <h2 className="text-2xl font-semibold text-themecolor-900 mb-4 font-display">
         Students List
       </h2>
       {loading && (
-                <p className="text-blue-500 dark:text-blue-400 mb-4"><Spinner/></p>
+        <p className="text-themecolor-600 mb-14 font-sans">
+          <Spinner />
+        </p>
       )}
-      {error && (
-        <p className="text-red-500 dark:text-red-400 mb-4">Error: {error}</p>
-      )}
+      {error && <p className="text-red-500 mb-14 font-sans">Error: {error}</p>}
       {students.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-200 dark:bg-gray-700">
-                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white">
+              <tr className="bg-themecolor-200">
+                <th className="border border-themecolor-400 px-4 py-2 text-left text-themecolor-120 font-sans">
                   Name
                 </th>
-                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white">
+                <th className="border border-themecolor-400 px-4 py-2 text-left text-themecolor-120 font-sans">
                   Student ID
                 </th>
-                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white">
+                <th className="border border-themecolor-400 px-4 py-2 text-left text-themecolor-120 font-sans">
                   Email
                 </th>
-                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white">
+                <th className="border border-themecolor-400 px-4 py-2 text-left text-themecolor-120 font-sans">
                   Department
                 </th>
-                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-800 dark:text-white">
+                <th className="border border-themecolor-400 px-4 py-2 text-left text-themecolor-120 font-sans">
                   Subjects
                 </th>
               </tr>
             </thead>
             <tbody>
               {students.map((student) => (
-                <tr
-                  key={student._id}
-                  className="hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white">
+                <tr key={student._id} className="hover:bg-themecolor-100">
+                  <td className="border border-themecolor-400 px-4 py-2 text-themecolor-120 font-sans">
                     {student.name}
                   </td>
-                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white">
+                  <td className="border border-themecolor-400 px-4 py-2 text-themecolor-120 font-sans">
                     {student.studentId || "N/A"}
                   </td>
-                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white">
+                  <td className="border border-themecolor-400 px-4 py-2 text-themecolor-120 font-sans">
                     {student.userId?.email || "N/A"}
                   </td>
-                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white">
+                  <td className="border border-themecolor-400 px-4 py-2 text-themecolor-120 font-sans">
                     {student.department?.name || "Not Assigned"}
                   </td>
-                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-white">
+                  <td className="border border-themecolor-400 px-4 py-2 text-themecolor-120 font-sans">
                     {getStudentSubjects(student)}
                   </td>
                 </tr>
@@ -80,9 +75,7 @@ const StudentsList = () => {
           </table>
         </div>
       ) : (
-        <p className="text-gray-700 dark:text-gray-300">
-          No students available.
-        </p>
+        <p className="text-themecolor-120 font-sans">No students available.</p>
       )}
     </div>
   );

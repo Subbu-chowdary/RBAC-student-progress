@@ -1,55 +1,20 @@
-// college-portal/client/src/components/Navbar.js
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(
-    () => localStorage.getItem("darkMode") === "true"
-  );
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("darkMode", isDarkMode);
-  }, [isDarkMode]);
-
-  const handleToggle = () => {
-    setIsDarkMode((prev) => !prev);
-  };
-
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md z-10">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-2">
+    <nav className="fixed top-0 left-0 w-full bg-themecolor-50 shadow-md z-10">
+      <div className="mx-auto px-4 sm:px-6 lg:px-2">
         <div className="flex justify-between items-center h-16">
-          {/* Left side: Logo */}
           <div className="flex items-center">
-            <Link
-              to="/"
-              className="text-xl font-bold text-gray-900 dark:text-white"
-            >
+            <Link to="/" className="text-xl font-bold text-themecolor-800">
               研修監視 監視
             </Link>
           </div>
-
-          {/* Right side: Dark Mode Toggle and Profile Icon */}
           <div className="flex items-center space-x-4">
-            {/* Dark Mode Toggle */}
-            <label className="toggle-container flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isDarkMode}
-                onChange={handleToggle}
-                className="sr-only"
-              />
-              <span className="toggle-slider"></span>
-              <span className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                {isDarkMode ? "Dark" : "Light"}
-              </span>
-            </label>
-
-            {/* Profile Icon */}
             <Link
               to="/profile"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+              className="text-themecolor-500 hover:text-themecolor-600 transition-colors"
             >
               <svg
                 className="w-6 h-6"
